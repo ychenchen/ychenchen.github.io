@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Search" href="javascript:;">
+            <a class="navbar-item search" title="Buscar" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -113,7 +113,7 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
-            <a href="/2019/06/03/java/jvm/classloader/" itemprop="url">ClassLoader</a>
+            <a href="/2019/06/03/java/jvm/classloader/" itemprop="url">Java ClassLoader</a>
         
     </h1>
     <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
@@ -130,14 +130,16 @@
         <span class="column is-narrow">
             
             
-            a few seconds read (About 1 words)
+            3 minutes de lectura (Alrededor de 518 palabras)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <a id="more"></a>
-
+        <h2 id="什么是ClassLoader"><a href="#什么是ClassLoader" class="headerlink" title="什么是ClassLoader"></a>什么是ClassLoader</h2><p>Java ClassLoader是一个非常重要但是在平时开发过程中很少直接用到的类，从JDK源码中可以看出ClassLoader是一个抽象类；我们都知道Java程序是跑在JVM上的，当我们编译一个Java类的时候，JVM会将我们写的Java程序转换成以.class作为后缀的字节码程序，这类程序是和平台与机器无关的。当我们尝试使用这个类的时候，ClassLoader就将对应的类加载到内存中。</p>
+        <p class="article-more-link">
+            <a href="/2019/06/03/java/jvm/classloader/#more">Leer más</a>
+        </p>
     
     </div>
     
@@ -249,7 +251,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -262,10 +264,10 @@
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: 'Posts',
-                PAGES: 'Pages',
-                CATEGORIES: 'Categories',
+                PAGES: 'Páginas',
+                CATEGORIES: 'Categorías',
                 TAGS: 'Tags',
-                UNTITLED: '(Untitled)',
+                UNTITLED: '(Sin título)',
             },
             CONTENT_URL: '/content.json',
         };

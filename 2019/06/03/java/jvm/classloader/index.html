@@ -3,7 +3,7 @@
 <head>
     <meta name="baidu-site-verification" content="H0uSt5ATxN" />
     <meta charset="utf-8">
-<title>ClassLoader - ychenchen</title>
+<title>Java ClassLoader - ychenchen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Search" href="javascript:;">
+            <a class="navbar-item search" title="Buscar" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -105,7 +105,7 @@
     <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
-            ClassLoader
+            Java ClassLoader
         
     </h1>
     <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
@@ -122,13 +122,32 @@
         <span class="column is-narrow">
             
             
-            a few seconds read (About 1 words)
+            3 minutes de lectura (Alrededor de 518 palabras)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <a id="more"></a>
+        <h2 id="什么是ClassLoader"><a href="#什么是ClassLoader" class="headerlink" title="什么是ClassLoader"></a>什么是ClassLoader</h2><p>Java ClassLoader是一个非常重要但是在平时开发过程中很少直接用到的类，从JDK源码中可以看出ClassLoader是一个抽象类；我们都知道Java程序是跑在JVM上的，当我们编译一个Java类的时候，JVM会将我们写的Java程序转换成以.class作为后缀的字节码程序，这类程序是和平台与机器无关的。当我们尝试使用这个类的时候，ClassLoader就将对应的类加载到内存中。</p>
+<a id="more"></a>
+<h2 id="ClassLoader的类型"><a href="#ClassLoader的类型" class="headerlink" title="ClassLoader的类型"></a>ClassLoader的类型</h2><p>在Java中，有三种内置的ClassLoader：</p>
+<ol>
+<li>Bootstrap Class Loader - 负责加载JDK内部的类，即位于$JAVA_HOME/jre/lib目录下的jar包中的类，如rt.jar， charsets.jar等，我们平时常用的java.lang.* 包中的类均是由Bootstrap Class Loader加载的。</li>
+<li>Extensions Class Loader - 负责加载$JAVA_HOME/jre/lib/ext目录下的jar包中的类。</li>
+<li>System Class Loader - 负责加载当前classpath中的Java类，classpath一般是我们在启动Java程序时通过-cp或者-classpath来指定的</li>
+</ol>
+<p><img src="http://ww2.sinaimg.cn/large/006tNc79ly1g444j81o27j30iw0ih3zl.jpg" alt="hierarchy-of-class-loaders"></p>
+<h2 id="类的加载时机和加载方式（父类委托机制）"><a href="#类的加载时机和加载方式（父类委托机制）" class="headerlink" title="类的加载时机和加载方式（父类委托机制）"></a>类的加载时机和加载方式（父类委托机制）</h2><p>在以下两种情况下类会被加载：</p>
+<ol>
+<li>使用new关键字申请类的实例时，例如：MyClass mc = new MyClass()</li>
+<li>代码中使用类的静态引用是，例如：System.out</li>
+</ol>
+<p>从上面的图上可以看出，类加载器是采用继承结构的。第一个类是通过我们程序中声明的静态main方法static main()来加载的。下面所有类的加载都是通过已经加载的类来加载的。<br>类加载过程遵循以下原则：</p>
+<ol>
+<li>检查要加载的类是否已经被加载了</li>
+<li>如果没有被加载，请求它的父类加载器加载请求的类</li>
+<li>如果父类加载器无法加载，则尝试自己加载</li>
+</ol>
 
     
     </div>
@@ -164,7 +183,7 @@
 
 
 <div class="comments">
-    <h3 class="title is-4">Comments</h3>
+    <h3 class="title is-4">Comentarios</h3>
     
 <script>
     var disqus_config = function () {
@@ -288,7 +307,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -301,10 +320,10 @@
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: 'Posts',
-                PAGES: 'Pages',
-                CATEGORIES: 'Categories',
+                PAGES: 'Páginas',
+                CATEGORIES: 'Categorías',
                 TAGS: 'Tags',
-                UNTITLED: '(Untitled)',
+                UNTITLED: '(Sin título)',
             },
             CONTENT_URL: '/content.json',
         };
