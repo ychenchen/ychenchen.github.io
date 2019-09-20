@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Search" href="javascript:;">
+            <a class="navbar-item search" title="Buscar" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -130,48 +130,21 @@
         <span class="column is-narrow">
             
             
-            9 minutes read (About 1400 words)
+            9 minutes de lectura (Alrededor de 1401 palabras)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h2 id="1-Apache-Flink是什么-—-Architecture"><a href="#1-Apache-Flink是什么-—-Architecture" class="headerlink" title="1. Apache Flink是什么? — Architecture"></a>1. Apache Flink是什么? — Architecture</h2><ul>
-<li><p>官网定义：</p>
-<blockquote>
+<li>官网定义：<blockquote>
 <p>Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams. Flink has been designed to run in all common cluster environments, perform computations at in-memory speed and at any scale.</p>
 </blockquote>
 </li>
-<li><p>其他定义：</p>
-<blockquote>
-<p>Apache Flink is a distributed stream processor with intuitive and expressive APIs to implement stateful stream processing applications. It efficiently runs such applications at large scale in a fault-tolerant manner. </p>
-</blockquote>
-</li>
 </ul>
-<h2 id="2-传统的数据处理架构"><a href="#2-传统的数据处理架构" class="headerlink" title="2. 传统的数据处理架构"></a>2. 传统的数据处理架构</h2><p>传统的数据处理架构一般分为两种类型：transactional processing and analytical processing.</p>
-<ul>
-<li><p>transactional processing<br>在传统的关系型事务处理架构下，整个系统被划分为数据处理层（计算层，部署各种应用）和数据存储层（关系型数据库）：<br><img src="imgs/intro/TraditionalTrasanctional.png" alt="raditional design of transactional applications that store data in a remote database system"><br>在这种架构下，当事件被处理的时候，应用从数据库中读取它的状态或者更新关系型数据库的状态。通常，一个数据库需要同时为多个应用提供服务，那么，当需要扩展关系型数据库或者修改Schema、表名等的时候就要格外小心了。<br>针对这个问题，出现了微服务设计模式，微服务遵循Linux的一次只做一件事儿，且要把这件事儿做好的设计理念，在微服务架构下，各个服务之间是严格解耦合的，应用之间通过接口进行通信，每个服务可以采用不同的技术栈（不同的编程语言，不同的数据存储）来实现。下图展示了一个微服务的一般架构：<br><img src="imgs/intro/AMicroServiceArchitecture.png" alt="A microservices architecture"></p>
-</li>
-<li><p>Analytical Processing<br>和事务型处理应用不同的是，分析型架构一般将数据存储在数据仓库中，这个过程一般是通过ETL工具将数据从日志或者关系型数据库转存到数据仓库。基于数据仓库的查询一般有两类：一类是用来做报表统计，一类是用来做ad-hoc queries（即席查询）。这两类都是基于数据仓库做批次查询。<br><img src="imgs/intro/ATraditionalDataWarehouseArchitectureForDataAnalytics.png" alt="ATraditionalDataWarehouseArchitectureForDataAnalytics"></p>
-</li>
-</ul>
-<h2 id="3-Stateful-Stream-Processing-有状态数据流处理"><a href="#3-Stateful-Stream-Processing-有状态数据流处理" class="headerlink" title="3. Stateful Stream Processing(有状态数据流处理)"></a>3. Stateful Stream Processing(有状态数据流处理)</h2><p>有状态数据流处理用来处理那种无界的数据流，先解释一下它是如何执行的：<br>任何处理流式数据且不是来一条就处理一条的应用都需要是stateful的，通过state来保存和获取中间数据。当应用产生一条数据的时候，它可以执行任意从state中读取数据或者将数据写入到state的操作。state可以保存在很多地方：程序变量，本地文本文件，嵌入式的或者外部的数据库等。<br><br>Apache Flink将状态保存到本地内存或者嵌入式数据库中，由于Flink是一个分布式系统，为了防止机器故障或者应用故障造成本地状态丢失，Flink周期性的将应用state的checkpoint写入到远端的持久化存储中。<br><img src="imgs/intro/AStatefulStreamingApp.png" alt="AStatefulStreamingApp"></p>
-<p>有状态流式处理是非常灵活的，也有很多应用场景，下面我们来讨论三个：</p>
-<h2 id="4-REAL-WORLD-STREAMING-USE-CASES"><a href="#4-REAL-WORLD-STREAMING-USE-CASES" class="headerlink" title="4. REAL-WORLD STREAMING USE-CASES"></a>4. REAL-WORLD STREAMING USE-CASES</h2><h3 id="4-1-Event-Driven-Applications"><a href="#4-1-Event-Driven-Applications" class="headerlink" title="4.1 Event-Driven Applications"></a>4.1 Event-Driven Applications</h3><p>事件驱动应用典型的应用场景包括：</p>
-<ol>
-<li>实时推荐（e.g. 消费者浏览购物网站时实时推荐产品）</li>
-<li>模式识别和复杂事件处理（e.g. 信用卡交易欺诈检测）</li>
-<li>异常检测（e.g. 检测针对计算机网络的攻击尝试）</li>
-</ol>
-<p>事件驱动应用是微服务架构的进化，它们通过事件日志而不是Rest接口进行通信。它把应用产生的数据作为本地状态（local state）保存，而不是写入外部存储中。下图是一个典型的事件驱动流式应用的服务架构：<br><img src="imgs/intro/AnEvent-drivenApplicationArchitecture.png" alt="AnEvent-drivenApplicationArchitecture"><br>上图中应用是通过事件日志进行连接的，前面的应用将输出发送给event log, 后续应用消费event log. 每个应用都可以是stateful的，且都可以本地化存储自己的state而无需访问外部数据库。应用本身也都可以单独扩展。</p>
-<h3 id="4-2-Data-Pipelines"><a href="#4-2-Data-Pipelines" class="headerlink" title="4.2 Data Pipelines"></a>4.2 Data Pipelines</h3><p>现在的软件架构往往会将一份数据分别放到多种存储中，这种情况下，保持数据的一致性是非常重要的。通常采用ETL定期完成这类工作，但时效性很难保证。因此，可以采用event log来分发更新。所有的更新被写入和分发到event log中，消费端将更新合并到目标存储中。<br>低延迟的摄取、转换、写入数据是有状态流式处理的另一个应用。这类应用被称作data pipeline. Data pipeline必须能在短时间内处理大量的数据。Data pipeline要能够支持不同的数据源和目标源，所有这些，Flink都可以做到。</p>
-<h3 id="4-3-Streaming-Analytics"><a href="#4-3-Streaming-Analytics" class="headerlink" title="4.3 Streaming Analytics"></a>4.3 Streaming Analytics</h3><p>Streaming analytics应用通常用于以下场景：</p>
-<ol>
-<li>监控电话网络的质量</li>
-<li>分析用户在电话应用中的行为</li>
-<li>用户实时数据的即席查询</li>
-</ol>
-
+        <p class="article-more-link">
+            <a href="/2019/09/20/flink/intro_to_stateful_stream_processing/#more">Leer más</a>
+        </p>
     
     </div>
     
@@ -283,7 +256,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -296,10 +269,10 @@
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: 'Posts',
-                PAGES: 'Pages',
-                CATEGORIES: 'Categories',
+                PAGES: 'Páginas',
+                CATEGORIES: 'Categorías',
                 TAGS: 'Tags',
-                UNTITLED: '(Untitled)',
+                UNTITLED: '(Sin título)',
             },
             CONTENT_URL: '/content.json',
         };
