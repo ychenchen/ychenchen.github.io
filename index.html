@@ -123,56 +123,17 @@
         <span class="column is-narrow">
             
             
-            23 minutes read (About 3491 words)
+            23 minutes read (About 3492 words)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h2 id="1-数据流编程简介-Introduction-To-Dataflow-Programming"><a href="#1-数据流编程简介-Introduction-To-Dataflow-Programming" class="headerlink" title="1. 数据流编程简介-Introduction To Dataflow Programming"></a>1. 数据流编程简介-Introduction To Dataflow Programming</h2><ul>
-<li><p>数据流图-Dataflow Graphs<br><br><br>数据流图通常以有向图来表示，有向图的节点（nodes）被称作Operators代表计算，边代表数据依赖。Operators是数据流应用的基本功能单元，Operators从输入源读取数据，进行计算后将结果写入到下一个Opreator。没有输入的Operator叫做输入源（data sources）,没有输出的Operator叫做目标源(data sinks)。一个数据流图必须至少有一个数据源和一个目标源。下面是一个典型的数据流图。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/A_logical_dataflow_graph_to_continuously_count_hashtags_(nodes_represent_operators_and_edges_denote_data_dependencies).png" alt="A_logical_dataflow_graph_to_continuously_count_hashtags_(nodes_represent_operators_and_edges_denote_data_dependencies)"><br>这个图只是一个逻辑图，因为因为它只表达了计算逻辑的高层次抽象。为了执行这个数据流图，逻辑图需要转换成物理流程图。下图是上图对应的物理流程图。在逻辑图中节点代表操作，在物理图中，节点代表任务。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/A_physical_dataflow_plan_for_counting_hashtags_(nodes_represent_tasks).png" alt="A_physical_dataflow_plan_for_counting_hashtags_(nodes_represent_tasks)"></p>
-</li>
-<li><p>数据交换策略-Data Exchange Strategies<br>下图给出了几种典型的数据交换策略：<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/Data_exchange_strategies.png" alt="Data_exchange_strategies"></p>
-<ul>
-<li>Forward策略直接将数据从一个任务发送到接收任务。如果两个任务都在同一台物理机上的话，这种策略可以避免跨网络传输</li>
-<li>广播策略将一份数据发送到同一个operator的所有并行任务中。这种策略涉及到数据复制和网络传输，因此代价比较大</li>
-<li>基于key的策略将数据按照key进行划分，从而保证相同key的数据被相同的任务处理</li>
-<li>随机策略将数据随机均匀分配到每个计算任务中</li>
-</ul>
-</li>
-</ul>
-<h2 id="2-Data-Stream之上的操作"><a href="#2-Data-Stream之上的操作" class="headerlink" title="2. Data Stream之上的操作"></a>2. Data Stream之上的操作</h2><ul>
-<li>Data ingestion and data egress<br>这两种操作允许Processor和外部系统打交道。两种操作对应的Operator分别叫做数据源和目标源。</li>
-<li>Transformation Operations<br>Transformation操作一次消费一个事件，将转换操作应用到这个时间数据上，并产生一个新的输出流。</li>
-<li>Rolling Aggregations<br>Rolling Aggregation是一个聚集操作，例如sum, minimum, maximum, 结果根据每一个事件的到来持续更新。Aggregation操作是有状态的，每次当当前状态和新到来的事件合并到一起，产生一个更新后的聚集结果。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/A_rolling_minimum_aggregation_operation.png" alt="A_rolling_minimum_aggregation_operation"></li>
-<li>Window Operations<br>Transformation和Rolling操作一次处理一个事件，产生一个结果事件并更新状态。然而，有些操作必须先buffer一些记录，然后再计算结果。<br>我们给出下面几种窗口：<ul>
-<li>滚动窗口-Tumbling windows<br><br><br>基于数量的滚动窗口给出每次触发计算前需要累积多少数据:<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/Count-based_tumbling_window.png" alt="Count-based_tumbling_window"><br>基于时间的滚动窗口定义了每次触发计算的时间间隔:<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/Time-based_tumbling_window.png" alt="Time-based_tumbling_window"></li>
-<li>滑动窗口-Sliding windows<br>滑动窗口将事件划分到固定大小的重叠buckets中。因此，一个event可能属于多个buckets。我们通过定义窗口长度和滑动长度（slide）来定义一个滑动窗口。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/Sliding_count-based_window_with_a_length_of_four_events_and_a_slide_of_three_events.png" alt="Sliding_count-based_window_with_a_length_of_four_events_and_a_slide_of_three_events"></li>
-<li>会话窗口-Session windows<br>考虑一个分析在线用户行为的应用，由于Session的长度不是提前定义的，而是取决于实际数据，因此滚动窗口和滑动窗口都无法应用到这种场景中。因此，我们需要一种能将同一个Session中的数据都放到同一个bucket中window操作。Session Windows操作将事件按照Session进行划分，它会定义一个Session Gap值，这个值表示多长时间不活跃就可以认为一个Session结束了。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/Session_window.png" alt="Session_window"></li>
-<li>并行窗口<br>我们目前看到的window操作都是基于全部的stream数据的。然而现实中，我们可能想把一个Stream划分成多个逻辑Stream，然后定义一个并行窗口。例如你收到了来自于不同场景的应用数据，想把这个数据根据ID进行分组，然后再应用到window操作上：<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/A_parallel_count-based_tumbling_window_of_length_2.png" alt="A_parallel_count-based_tumbling_window_of_length_2"></li>
-<li>总结<br>在流式处理中，window操作和两个概念密切相关：时间语义和状态管理(time semantics and state management)。在流式处理中，哪怕我们只是做一个简单的操作，也需要保持状态。考虑一个需要执行很长时间的应用，我们需要确保遇到失败的情况时，状态可以被无误的恢复。因此，下面我们就来探索一下时间语义和失败情况下的状态保证。</li>
-</ul>
-</li>
-</ul>
-<h2 id="3-时间语义-Time-Semantics"><a href="#3-时间语义-Time-Semantics" class="headerlink" title="3. 时间语义-Time Semantics"></a>3. 时间语义-Time Semantics</h2><ul>
-<li>Processing Time<br><br><br>Processing Time是处理数据的Operator实际执行的时候的本地机器时间。一个processing-time window包含了在一个window周期内到达这个window的所有数据。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/A_processing-time_window_continues_counting_time_even_data_is_delayed.png" alt="A_processing-time_window_continues_counting_time_even_data_is_delayed"></li>
-<li>Event Time<br><br><br>Event Time是Stream中一个事件真实发生的时间，Event Time基于一个附属于event之上的时间戳，因此在基于Event-Time的窗口下，及时数据延迟到达，也能被划分到相同的窗口内。<br><img src="/2019/09/20/flink/02-stream-processing-fundamentals/Event_time_correctly_places_events_in_a_window,_reflecting_the_reality_of_how_things_happened.png" alt="Event_time_correctly_places_events_in_a_window,_reflecting_the_reality_of_how_things_happened"></li>
-<li>Watermarks<br><br><br>到目前为止，我们忽略了一个重要的点，我们何时触发一个时间窗口？我们要等待多长时间才能确定我们已经收到了某一个时间点之前产生的所有数据？我们如何知道数据是否延迟了？接下来，我们看一下如何配置event-time窗口的行为。<br>Watermark是一个全局的程序指标，表示在某一个时间点上，我们确信没有延迟数据会再到达了。本质上，Watermark提供了一个逻辑时钟，通过它来告诉系统当前的事件事件。当一个Operator收到一个带有时间T的watermark时，我们可以知道，不会再收到早于时间T的事件了。当收到watermark时，就会向Operator发出一个信号，告知Operator，某一个时间间隔内的数据都收到了，可以触发计算了。<br><br><br>watermark在结果可信度和延迟之间提供了一个权衡。Eager watermark提供低延迟，但可信度低；在这种情况下，有些事件可能在watermark之后到达，我们需要提供代码来处理它们。另一方面，如果watermark设置的较为宽松，那么可信度提高的同时延迟也提高了。<br><br><br>需要指出的是，仅仅依赖watermark并不是一个好主意。保证系统提供一些机制来处理那些在watermark之后到来的数据是至关重要的，这些机制可能是忽略它们、记录日志或者使用延迟数据来修正之前的结果。</li>
-<li>Processing Time Versus Event Time<br><br><br>总结起来，Processing Time提供了低延迟，但是结果依赖于数据处理的速度，不是确定性的，因此常用于实时性比精度要求高的场景或者需要周期性的生成报表而不关心准确性的场景；Event Time确保结果是确定性的，而且可以让我们有机会处理那些迟到的或者乱序的数据。</li>
-</ul>
-<h2 id="4-状态和一致性模型-State-and-Consistency-Model"><a href="#4-状态和一致性模型-State-and-Consistency-Model" class="headerlink" title="4.状态和一致性模型-State and Consistency Model"></a>4.状态和一致性模型-State and Consistency Model</h2><p>Stateful operators采用新到来的数据和内部state一起来计算输出。当我们和采用批处理方式处理无界数据集的场景做对比的时候，state就变得更加重要了。在现代流处理系统兴起之前，一个通常的处理无界数据流的方法是周期性的将实时输入的数据划分为小的批次，然后对每一个划分出来的小批次分别做批处理。当一个job完成时，结果被写入到持久化系统中，所有的operator state都会丢失。这个问题的一个通常的解决方式是将state保存到外部系统如数据库中。相反，在持续运行的流式作业中，state是一直持久化到event中的，因此在这类编程模型中，state是一等公民。<br><br><br>由于Streaming Operators处理的是无界数据，因此我们要格外小心，别让内部状态无线增长。为了限制state的大小，Operators通常只保存到目前出现的events的一个汇总，可以是count，sum，events的一个sample，一个window buffer，或者保存正在执行的应用的部分属性的自定义数据结构。<br><br><br>下面是stateful Operators通常面临的挑战：<br></p>
-<ul>
-<li>状态管理<br><br><br>系统需要能高效的管理状态，确保它们不会受到并发更新的影响。</li>
-<li>状态分区<br><br><br>并行化通常会使事情变得复杂，因为结果既需要依赖状态又需要依赖正在到来的数据。幸运的是，在许多应用场景中，我们可以将状态按照key进行分区，独立地管理它们。</li>
-<li>状态恢复<br><br><br>stateful Operators面临的最大的挑战是当失败的时候可以确保状态可以被恢复且结果是正确的。</li>
-</ul>
-<h2 id="5-Result-Guarantees"><a href="#5-Result-Guarantees" class="headerlink" title="5. Result Guarantees"></a>5. Result Guarantees</h2><ul>
-<li>At-most-once<br><br><br>当任务失败时，最简单的事情是什么都不做，因此不需要从状态恢复数据。或者说，当失败发生时，这期间的事件都会被丢弃，不需要保证结果的正确性。这种保证也可以认为是没有保证，因为哪怕一个系统丢弃所有的数据也可以提供这种级别的保证。没有保证听上去很不到，但如果你只是想要一个近似的结果，并且想要延迟尽可能的低，这不失为一种选择。</li>
-<li>At-least-once<br><br><br>在大多数应用场景中，我们期望数据不丢失。这种保证被称作最少一次，也就是说所有的events都会被处理，有些events可能会被处理超过1次。当应用的准确性只依赖于信息的完整性时重复处理是可以被接受的。然而，在至少一次的保证下，如果要统计每个事件发生的次数就可能得到错误的结果。</li>
-<li>Exactly-once<br><br><br>Exactly once是最严格的保证，且很难实现。Exactly-once意味着我们不仅需要保证没有数据丢失，且对每个event的状态更新只会被应用一次。提供Exactly once保证需要At least once保证，因此，data replay机制还是有必要的。此外，Stream Processor需要确保内部状态一致性。在恢复之后，需要只要一个event的更新是否已经被应用到了state上。事务型更新可以实现这个目标，但是可能带来性能问题。相反，Flink采用更轻量级的快照机制来实现Exactly-once的结果保证。</li>
-<li>End-to-end Exactly-once<br>我们目前看到的三种状态保证指的是stream processor管理的应用状态。在现实应用中，streaming应用除了一系列的processor外还至少有一个数据源和一个输出源。End-to-end Exactly-once指的是整个数据处理流程的准确性。每个component提供它自己的可靠性保证，那么整个数据流的可靠性保障就是所有组件中最弱的哪一个。有必要指出的是有时候我们可以提供更弱的保证来获取更强的语义。一个例子是当任务做幂等元（如最大和最小）操作的时候，我们可以通过at-least-once保证来实现exactly-once语义。</li>
-</ul>
-
+<li><p>数据流图-Dataflow Graphs<br><br><br>数据流图通常以有向图来表示，有向图的节点（nodes）被称作Operators代表计算，边代表数据依赖。Operators是数据流应用的基本功能单元，Operators从输入源读取数据，进行计算后将结果写入到下一个Opreator。没有输入的Operator叫做输入源（data sources）,没有输出的Operator叫做目标源(data sinks)。一个数据流图必须至少有一个数据源和一个目标源。下面是一个典型的数据流图。</p></li></ul>
+        <p class="article-more-link">
+            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/#more">Read More</a>
+        </p>
     
     </div>
     
