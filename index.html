@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Buscar" href="javascript:;">
+            <a class="navbar-item search" title="Search" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -123,7 +123,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 0 palabras)
+            a few seconds read (About 0 words)
         </span>
         
     </div>
@@ -160,105 +160,16 @@
         <span class="column is-narrow">
             
             
-            34 minutes de lectura (Alrededor de 5156 palabras)
+            34 minutes read (About 5157 words)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h2 id="1-系统架构-System-Architecture"><a href="#1-系统架构-System-Architecture" class="headerlink" title="1.系统架构-System Architecture"></a>1.系统架构-System Architecture</h2><p>Flink是一个用来做有状态并行数据流处理的分布式系统。一个安装好的Flink包含了分布在多台机器上的多个进程。对于一个分布式系统，需要注意以下要点：集群计算资源分配和管理、进程协调、数据存储的持久化和高可用、错误恢复。<br>Flink并不是自己实现所有这些功能，它关注它的核心功能–分布式数据流处理。Flink和Mesos、Yarn、Kubernates这类集群资源管理应用都集成的很好，Flink也可以以Standalone集群的模式运行。Flink并不提供分布式的持久化存储，而是借助于HDFS和S3这类对象存储。对于高可用模式下的leader选举，Flink借助于Apache Zookeeper来实现。</p>
-<h3 id="1-1-Flink组件-Components-of-a-Flink-Setup"><a href="#1-1-Flink组件-Components-of-a-Flink-Setup" class="headerlink" title="1.1 Flink组件-Components of a Flink Setup"></a>1.1 Flink组件-Components of a Flink Setup</h3><p>Flink安装后会有下面4个组件：JobManager、ResourceManager、TaskManager、Dispatcher。由于Flink是用Java和Scala来实现的，所有组件都是运行在JVM之上的。这四个组件的职责说明如下：</p>
-<ul>
-<li>JobManager<br>JobManager是控制一个application的Master进程，每个application都是被一个不同的JobManager单独控制的。JobManager接收到一个application后开始执行。一个application包含一个JobGraph, 一个逻辑数据流图和一个Jar包。JobManager将JobGraph转化为一个称为ExcutionGraph的物理数据流图，这里面包含了可以并行执行的任务。JobManager向ResourceManager请求执行task所需要的资源（TaskManager slots）。它一获取到足够的TaskManager slots，它就将ExcutionGraph的任务分发到执行它们的TaskManager上。在任务执行的过程中，JobManager负责协调所有任务，如checkpoints。</li>
-<li>ResourceManager<br>Flink为不同的环境和资源提供者（Yarn、Mesos、Kubernates、Standalone）提供了多种ResourceManager。ResourceManager负责管理TaskManager slots（Flink计算资源的基本单元）。当JobManager请求TaskManager slots的时候，ResourceManager就利用空闲的slots为JobManager构建TaskManager。如果ResourceManager没有足够的slot来满足JobManager的请求，ResourceManager就向资源提供者协调来规定TaskManager在哪个container中启动。ResourceManager还负责终止空闲的TaskManager来释放计算资源。</li>
-<li>TaskManager<br>TaskManager是Flink的计算资源。在一个Flink任务中会有多个TaskManager同时运行。每个TaskManager提供固定数量的Slots。slots的数量限制了一个TaskManager可以执行的任务的数量。当TaskManager启动后，它将slots向ResourceManager进行注册。当得到ResourceManager的指示后，TaskManager将一个或多个slots提供给JobManager。这个时候，JobManager就可以将任务分配到slots上来执行。在执行的过程中，一个TaskManager可以和执行同一个应用的其他TaskManager交换数据。</li>
-<li>Dispatcher<br>Dispather在job执行的过程中运行，它提供了一个Rest接口，用来提交application到Flink集群运行。一旦一个application被提交运行，它就启动一个JobManager并将任务交给它。Dispather就像集群的一个入口点，它还提供了一个web界面用来监控作业执行时的基本信息。有的时候，Dispather可能用不到。<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Application_submission_and_component_interactions.png" alt="Application_submission_and_component_interactions"><blockquote>
-<p>注释：这个图中有一个错误，最右侧的ResourceManager实际上应该为TaskManager。</p>
-</blockquote>
-</li>
-</ul>
-<h3 id="1-2-任务执行–Task-Execution"><a href="#1-2-任务执行–Task-Execution" class="headerlink" title="1.2 任务执行–Task Execution"></a>1.2 任务执行–Task Execution</h3><p>一个TaskManager可以同时执行多个task。这个tasks可以是同一个操作的子task（数据并行），不同的操作（任务并行），甚至是不同的应用（作业并行）。TaskManager提供了固定数量的slots来控制它能并发执行的任务数。</p>
-<h3 id="1-3-高可用–Highly-available-setup"><a href="#1-3-高可用–Highly-available-setup" class="headerlink" title="1.3 高可用–Highly available setup"></a>1.3 高可用–Highly available setup</h3><p>流式系统一般都是设计为7*24小时无间断运行的。如果发生意外，从失败中恢复一般会经过下面几个步骤：重启失败的进程，重启应用并恢复它的状态。</p>
-<ul>
-<li>TaskManager失败<br>TaskManager失败会减少可用的slot数，因此JobManager会向ResourceManager申请提供更多的slot。如果在Standalone模式下，JobManager直到有足够多的可用slot后才会重启应用。</li>
-<li>JobManager失败<br>JobManager控制一个流式应用的执行，保存执行过程的元数据（例如指向checkpoint的指针）。如果JobManager消失，流式应用就无法继续执行了，这就导致了JobManager的单点故障。为了解决这个问题，Flink提供了一个高可用模式，在这个模式下，它将一个job的元数据信息同时保存到了另一个JobManager中以防原来的JobManager失败。<br>Flink的高可用也是基于Apache Zookeeper的，Flink采用Zookeeper做leader选举。在高可用模式下，JobManager将JobGraph和所有需要的元数据信息（如应用jar包）写入到一个远程的存储系统中。此外，JobManager将指向存储位置的指针写入到Zookeeper中。因此，所有需要从JobManager失败中恢复所需要的数据都存储在了远端存储系统中，Zookeeper保存了存储位置的指针。<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/A_highly_available_Flink_setup.png" alt="A_highly_available_Flink_setup"><br>当JobManager失败时，所有属于这个应用的task都会被取消。接管它的工作的JobManager会执行如下步骤：<ul>
-<li>从Zookeeper中请求存储位置来获取JobGraph和Jar文件，从远端存储中获取上次checkpoint的状态信息。</li>
-<li>向ResourceManager请求slot继续执行应用</li>
-<li>重启应用并重置所有task的状态到上次已经完成的checkpoint位置</li>
-</ul>
-</li>
-</ul>
-<h2 id="2-Flink中的数据流转–Data-Transfer-in-Flink"><a href="#2-Flink中的数据流转–Data-Transfer-in-Flink" class="headerlink" title="2.Flink中的数据流转–Data Transfer in Flink"></a>2.Flink中的数据流转–Data Transfer in Flink</h2><p>每个TaskManager有一组network buffer（默认为32KB）用来发送和接收数据。如果发送方和接收方跑在不同的TaskManager进程上，那么它们通过操作系统的network stack来交换数据。流式应用需要以Pipeline的形式交换数据–每一对TaskManager之间保持一个永久的TCP连接用来交换数据。在一个Shuffle连接的场景下，每个发送任务都需要给所有的接收任务发送数据，下图是Flink数据流转的基本结构：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Data_transfer_between_TaskManagers.png" alt="Data_transfer_between_TaskManagers"><br>Flink提供了多种不同的技术来减少任务之间的网络传输开销。下面，我们简单来看一下基于信用的数据流控制（credit-based flow control）和任务链（task chaining）。</p>
-<ul>
-<li>credit-based flow control<br>在一个网络连接中只发送单条数据是非常低效率的，此时就需要Buffering来充分利用网络连接的带宽。在流式处理任务中，Buffering的一个缺点是增加了数据消费的延迟。<br>Flink实现了如下的credit-based flow control机制。接收任务向发送任务授予一些credit，即保留接收其数据的网络缓冲区数。发送方收到信用通知后，将发送授予的缓冲区数量及其backlog的大小，即已填充并准备装运的网络缓冲区数。接收方使用保留缓冲区处理已发货的数据，并使用发送方的backlog大小为其所有连接的发送方确定下一次授予credit的优先级。<br>credit-based flow control降低了延迟，因为一旦接收方有资源可以接收数据了，发送方就可以将数据发送给它。更重要的是，它可以应对数据倾斜的有效机制，因为credit的数量是基于发送方backlog的大小来确定的。因此，credit-based flow control是Flink实现高吞吐量和低延迟的一个重要工具。</li>
-<li>Task Chaining<br>为了满足Task Chaining的要求，必须至少配置两个operator，它们要有相同的并行度并且以local forward的方式连接。下面的pipeline满足这一要求：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/An_operator_pipeline_that_complies_with_the_requirements_of_task_chainin.png" alt="An_operator_pipeline_that_complies_with_the_requirements_of_task_chainin"><br>下面两张图片分别展示了有TaskChaining的情形和没有TaskChaining的情形：<br>Chained:<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Chained_task_execution_with_fused_functions_in_a_single_thread_and_data_passing_via_method_calls.png" alt="Chained_task_execution_with_fused_functions_in_a_single_thread_and_data_passing_via_method_calls"><br>NonChained:<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Nonchained_task_execution_with_dedicated_threads_and_data_transport_via_buffer_channels_and_serialization.png" alt="Nonchained_task_execution_with_dedicated_threads_and_data_transport_via_buffer_channels_and_serialization"><br>在Flink中TaskChaining是默认开启的。</li>
-</ul>
-<h2 id="3-事件时间处理–Event-Time-Processing"><a href="#3-事件时间处理–Event-Time-Processing" class="headerlink" title="3.事件时间处理–Event-Time Processing"></a>3.事件时间处理–Event-Time Processing</h2><ul>
-<li>TimeStamps<br>Flink处理的每一条数据都会带有一个timestamp。Flink将timestamp编码为16位的long类型值，并把它们附在记录的metadata中。</li>
-<li>Watermarks<br>除了记录的TimeStamp，基于event-time的Flilnk还必须提供Watermarks。基于时间的Operators使用这个时间来进行计算。在Flink中，Timestamp是包含了一个Long类型值的特殊记录。<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/A_stream_with_timestamped_records_and_watermarks.png" alt="A_stream_with_timestamped_records_and_watermarks"><br>Watermark有两个基本的属性：</li>
-</ul>
-<ol>
-<li>它们必须是线性增长的</li>
-<li>它们是和记录的TimeStamp相关的，一个包含了T TimeStamp的watermark意味着后续所有记录的TimeStamp都应该大于T<br>Watermark的一个有趣的特点是它允许应用控制结果的准确性和延迟。接近于记录timeStamp的watermark能带来低延迟但结果的完整性可能受到影响因为相关的记录可能还没有被包含进来。相反，保守的watermarks会增加记录延迟但也提高了结果的准确性</li>
-</ol>
-<ul>
-<li>Watermark propagation and event time<br>在Flink中，watermark是一条特殊的记录，由Operator tasks接收和发送。Tasks有一个内部的时间服务，当收到一个watermark的时候会被激活。Task可以在timer service注册timer以便在未来的指定时间点进行计算。例如，一个window operator为每一个活跃的window注册一个timer，当事件时间超过窗口结束时间的时候清理掉窗口的状态。<br>当任务收到一个watermark的时候，会执行如下操作：</li>
-</ul>
-<ol>
-<li>task根据当前watermark的时间戳更新其内部事件时间</li>
-<li>task的时间服务找出所有比当前更新后的事件时间小的所有timer。对每一个过期的timer，task调用一个callback函数，该函数可以执行计算并发射记录。</li>
-<li>task发送一个带有更新后的时间时间的watermark。<br>下面详细解释一下当一个task收到一个新的watermark的时候怎样向后发送watermark和更新事件时间。我们知道，Flink将数据流划分为多个分区，然后并行处理每个分区。每个分区是一组带有时间戳的记录和watermark数据流。根据Operator怎样和它前后的operator关联，它内部的task可以从一个或多个输入partition接收数据并把数据发送到一个或多个输出partition。下面，我们详细描述一个任务如何把watermark发送给多个输出task，又如何根据从输入task中接收到的watermark更新事件时间时钟的。<br>一个task为每一个输入分区保存一个分区watermark。当它收到一个分区的watermark后，它把当前分区的watermark更新为当前值和收到值的较大值。紧接着，task更新它的事件时间时钟为所有分区watermark的最小值。如果事件时间时钟更新（只会增加），那么task会处理所有触发的时钟并把新的事件时间广播到所有的下游任务。<br>下图展示了一个有四个输入分区、三个输出分区的任务接收watermark、更新内部分区watermark和事件时间时钟，并把新的watermark发送到下游的过程。<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Updating_the_event_time_of_a_task_with_watermarks.png" alt="Updating_the_event_time_of_a_task_with_watermarks"></li>
-</ol>
-<ul>
-<li>Timestamp Assignment and Watermark Generation<br>Flink数据流应用可以通过以下三种方式分配时间戳和生成水印：</li>
-</ul>
-<ol>
-<li>At the source：当一个输入流进入到application中时，时间戳和水印可以通过一个SourceFunction生成。记录可以以一个相关的时间戳被一起发送，而水印可以在任意时间点被作为一条特殊的记录发送。</li>
-<li>Periodic assigner：DataStream API提供了一个叫做AssignerWithPeriodicWatermarks的用户自定义函数，它从每一条记录中抽取TimeStamp，并可以被当前watermark周期性的查询。</li>
-<li>Punctuated assigner: AssignerWithPunctuatedWatermarks是另一种可以从每条记录中抽取TimeStamp的用户自定义函数。<br>通常，用户自定义的TimeStamp分配函数越靠近输入源端越好，因为当记录被Operator处理后就很难判断记录的原始顺序和它们的TimeStamp。</li>
-</ol>
-<h2 id="4-状态管理–State-Management"><a href="#4-状态管理–State-Management" class="headerlink" title="4.状态管理–State Management"></a>4.状态管理–State Management</h2><p>我们已经知道，大多数流式应用都是有状态的。有众多的Operator持续的读取和更新状态，包括一个window中的记录，输入源的读取位置或者用户自定义的应用级别的Operator状态。Flink将所有State同等对待。下面我们来说明Flink支持的不同类型的state。<br>通常，一个task的所有数据以及一个函数用来计算结果的所有数据都属于这个task的state。我们可以把state看成是一个本地变量或者实例变量，它可以被一个task的业务逻辑访问到。下图展示了task和它的state之间的交互：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/A_stateful_stream_processing_task.png" alt="A_stateful_stream_processing_task"><br>当Task接收到新的数据后，它可以读取并更新state，同时利用state和获取到的新数据计算结果。一个例子是task持续统计它收到的记录数。当task收到一条新纪录时，它先访问state获取当前的count，再更新count，更新state，最后将新的count发送出去。<br>在Flink中，state总是和一个特定的Operator相关。为了让Flink运行时知道Operator的state，Operator需要注册它的state。有两种类型的state：Operator state和keyed state。</p>
-<ul>
-<li><p>Operator State<br>Operator state的作用范围是Operator task。这以为这被相同的并行任务处理的记录访问到的都是相同的state。Operator state不能被其他task访问到：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Tasks_with_operator_state.png" alt="Tasks_with_operator_state"><br>Flink为Operator state提供了三种原语（primitives）：</p>
-<ul>
-<li>List state</li>
-<li>Union list state</li>
-<li>Broadcast state</li>
-</ul>
-</li>
-<li><p>Keyed state<br>Keyed state和定义在输入流中记录中定义的key相关。Flink为每一个key值保存一个state实例，并能将有相同key的记录分到保存有该key的state的Operator上。当task处理一条记录的时候，它自动将state访问的范围变更到当前记录的key上。因此，所有有相同key的记录都访问到相同的state。下图展示了task和keyed state交互的过程：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Tasks_with_keyed_state.png" alt="Tasks_with_keyed_state"><br>Flink为Keyed state提供了多种原语，下面是其中三种：</p>
-<ul>
-<li>Value state</li>
-<li>List state</li>
-<li>Map state</li>
-</ul>
-</li>
-<li><p>State Backend<br>对处理低延迟数据来说，有效率的state访问是至关重要的，因此每个并行任务会在本地保存状态确保对state的快速访问，在Flink中，由一个叫做state backed的可插拔组件来存储、访问和维护state的准确性。State backed负责两件事情：本地状态管理和将state checkpoint到远端存储。</p>
-</li>
-</ul>
-<h2 id="5-Checkpoints-SavePoints-and-State-Recovery"><a href="#5-Checkpoints-SavePoints-and-State-Recovery" class="headerlink" title="5.Checkpoints, SavePoints, and State Recovery."></a>5.Checkpoints, SavePoints, and State Recovery.</h2><p>Flink作为一个分布式数据处理系统，必须能够处理各种意外情况，如进程被杀掉了，服务器掉线，网络连接中断等异常情况。由于task是在本地管理它们的state的，Flink必须确保在意外情况下这些state不会丢失且还是一致的。</p>
-<ul>
-<li>Consistent Checkpoints<br>Flink的恢复机制是基于application state的consistent checkpoints的。一个有状态流应用的consistent checkpoint是在一个点上的所有task的状态拷贝，这时，所有task都处理了完全一致的输入数据。我们来看一个简单的步骤：<ol>
-<li>暂停消费输入数据</li>
-<li>等待所有消费到的数据处理完，即等待所有的task都处理完了它们的输入数据</li>
-<li>将每个task 的state复制到远端的持久化存储中，即完成一次Checkpoint</li>
-<li>继续所有数据流的消费<br>下图是一个简单应用的consistent checkpoint：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/A_consistent_checkpoint_of_a_streaming_application.png" alt="A_consistent_checkpoint_of_a_streaming_application"></li>
-</ol>
-</li>
-<li><p>Recovery from a consistent checkpoint<br>下图展示了一个恢复过程：<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Recovering_an_application_from_a_checkpoint.png" alt="Recovering_an_application_from_a_checkpoint"><br>应用需要经过以下三步来恢复：</p>
-<ol>
-<li>重启整个应用</li>
-<li>重置所有有状态task的state到最新的checkpoint。</li>
-<li>继续处理所有的任务</li>
-</ol>
-</li>
-<li><p>Flink’s checkpoint algorithm<br>暂停、checkpoint、恢复这种做法在实际应用中是不可行的，因为在做checkpoint的过程中它停止应用会造成延迟消费。因此，Flink实现了基于Chandy–Lamport算法的checkpoint机制。</p>
-</li>
-<li><p>Savepoints<br>Flink的恢复算法是基于state的checkpoint的。Checkpoints是根据配置的策略周期性的完成和删除的。<br>Flink的一个重要的且独特的特性是savepoint。savepoint使用和checkpoint同样的算法来创建因此就是比checkpoint多了一些额外的metadata信息。Flink不会自动创建savepoint，必须用户手工触发。Flink也不会自动清理savepoint。<br>从savepoint中启动一个应用<br>一个application包含了多个Operator，每个Operator可以定义一个多多个keyed state或operator state。Operator可以通过一个多多个task并行执行。因此，一个典型的应用包含多个state，它们分布在不同的Operator task中，因此可以分布在不同的TaskManager进程中执行。<br>下图展示了一个有三个Operator的application，每个Operator上跑着两个task。当进行savepoint的时候，所有任务的state被复制到了一个持久化的存储位置中。<br><img src="/2019/09/23/flink/03-the-architecture-of-apache-flink/Taking_a_savepoint_from_an_application_and_restoring_an_application_from_a_savepoint.png" alt="Taking_a_savepoint_from_an_application_and_restoring_an_application_from_a_savepoint"><br>复制到savepoint中的state是通过一个Operator标识符和和一个state名字来组织的，当应用从savepoint启动时，Flink将savepoint中的数据重新分发到相应Operator的task中。</p>
-</li>
-</ul>
-<p>End</p>
-
+        <p class="article-more-link">
+            <a href="/2019/09/23/flink/03-the-architecture-of-apache-flink/#more">Read More</a>
+        </p>
     
     </div>
     
@@ -289,7 +200,7 @@
         <span class="column is-narrow">
             
             
-            23 minutes de lectura (Alrededor de 3492 palabras)
+            23 minutes read (About 3492 words)
         </span>
         
     </div>
@@ -298,7 +209,7 @@
         <h2 id="1-数据流编程简介-Introduction-To-Dataflow-Programming"><a href="#1-数据流编程简介-Introduction-To-Dataflow-Programming" class="headerlink" title="1. 数据流编程简介-Introduction To Dataflow Programming"></a>1. 数据流编程简介-Introduction To Dataflow Programming</h2><ul>
 <li><p>数据流图-Dataflow Graphs<br>数据流图通常以有向图来表示，有向图的节点（nodes）被称作Operators代表计算，边代表数据依赖。Operators是数据流应用的基本功能单元，Operators从输入源读取数据，进行计算后将结果写入到下一个Opreator。没有输入的Operator叫做输入源（data sources）,没有输出的Operator叫做目标源(data sinks)。</p></li></ul>
         <p class="article-more-link">
-            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/#more">Leer más</a>
+            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/#more">Read More</a>
         </p>
     
     </div>
@@ -330,7 +241,7 @@
         <span class="column is-narrow">
             
             
-            9 minutes de lectura (Alrededor de 1416 palabras)
+            9 minutes read (About 1416 words)
         </span>
         
     </div>
@@ -343,7 +254,7 @@
 </li>
 </ul>
         <p class="article-more-link">
-            <a href="/2019/09/20/flink/01-intro-to-stateful-stream-processing/#more">Leer más</a>
+            <a href="/2019/09/20/flink/01-intro-to-stateful-stream-processing/#more">Read More</a>
         </p>
     
     </div>
@@ -375,7 +286,7 @@
         <span class="column is-narrow">
             
             
-            8 minutes de lectura (Alrededor de 1181 palabras)
+            8 minutes read (About 1181 words)
         </span>
         
     </div>
@@ -383,7 +294,7 @@
     
         <h2 id="什么是ClassLoader"><a href="#什么是ClassLoader" class="headerlink" title="什么是ClassLoader"></a>什么是ClassLoader</h2><p>Java ClassLoader是一个非常重要但是在平时开发过程中很少直接用到的类，从JDK源码中可以看出ClassLoader是一个抽象类；我们都知道Java程序是跑在JVM上的，当我们编译一个Java类的时候，JVM会将我们写的Java程序转换成以.class作为后缀的字节码程序，这类程序是和平台与机器无关的。当我们尝试使用这个类的时候，ClassLoader就将对应的类加载到内存中。</p>
         <p class="article-more-link">
-            <a href="/2019/06/03/java/jvm/01-classloader/#more">Leer más</a>
+            <a href="/2019/06/03/java/jvm/01-classloader/#more">Read More</a>
         </p>
     
     </div>
@@ -415,7 +326,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 5 palabras)
+            a few seconds read (About 5 words)
         </span>
         
     </div>
@@ -533,7 +444,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -546,10 +457,10 @@
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: 'Posts',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
                 TAGS: 'Tags',
-                UNTITLED: '(Sin título)',
+                UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/content.json',
         };

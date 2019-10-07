@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Buscar" href="javascript:;">
+            <a class="navbar-item search" title="Search" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -122,13 +122,14 @@
         <span class="column is-narrow">
             
             
-            34 minutes de lectura (Alrededor de 5156 palabras)
+            34 minutes read (About 5157 words)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h2 id="1-系统架构-System-Architecture"><a href="#1-系统架构-System-Architecture" class="headerlink" title="1.系统架构-System Architecture"></a>1.系统架构-System Architecture</h2><p>Flink是一个用来做有状态并行数据流处理的分布式系统。一个安装好的Flink包含了分布在多台机器上的多个进程。对于一个分布式系统，需要注意以下要点：集群计算资源分配和管理、进程协调、数据存储的持久化和高可用、错误恢复。<br>Flink并不是自己实现所有这些功能，它关注它的核心功能–分布式数据流处理。Flink和Mesos、Yarn、Kubernates这类集群资源管理应用都集成的很好，Flink也可以以Standalone集群的模式运行。Flink并不提供分布式的持久化存储，而是借助于HDFS和S3这类对象存储。对于高可用模式下的leader选举，Flink借助于Apache Zookeeper来实现。</p>
+<a id="more"></a>
 <h3 id="1-1-Flink组件-Components-of-a-Flink-Setup"><a href="#1-1-Flink组件-Components-of-a-Flink-Setup" class="headerlink" title="1.1 Flink组件-Components of a Flink Setup"></a>1.1 Flink组件-Components of a Flink Setup</h3><p>Flink安装后会有下面4个组件：JobManager、ResourceManager、TaskManager、Dispatcher。由于Flink是用Java和Scala来实现的，所有组件都是运行在JVM之上的。这四个组件的职责说明如下：</p>
 <ul>
 <li>JobManager<br>JobManager是控制一个application的Master进程，每个application都是被一个不同的JobManager单独控制的。JobManager接收到一个application后开始执行。一个application包含一个JobGraph, 一个逻辑数据流图和一个Jar包。JobManager将JobGraph转化为一个称为ExcutionGraph的物理数据流图，这里面包含了可以并行执行的任务。JobManager向ResourceManager请求执行task所需要的资源（TaskManager slots）。它一获取到足够的TaskManager slots，它就将ExcutionGraph的任务分发到执行它们的TaskManager上。在任务执行的过程中，JobManager负责协调所有任务，如checkpoints。</li>
@@ -257,7 +258,7 @@
 
 
 <div class="comments">
-    <h3 class="title is-4">Comentarios</h3>
+    <h3 class="title is-4">Comments</h3>
     
 <script>
     var disqus_config = function () {
@@ -381,7 +382,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -394,10 +395,10 @@
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: 'Posts',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
                 TAGS: 'Tags',
-                UNTITLED: '(Sin título)',
+                UNTITLED: '(Untitled)',
             },
             CONTENT_URL: '/content.json',
         };
