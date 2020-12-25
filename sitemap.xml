@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.ychenchen.com/2020/04/25/frontend/hue-js/</loc>
+    
+    <lastmod>2020-04-25T11:25:55.339Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.ychenchen.com/2020/02/12/flink/00-flink-training/</loc>
+    
+    <lastmod>2020-03-16T08:24:00.807Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.ychenchen.com/2020/02/12/flink/09-setting-up-flink-for-streaming-applications/</loc>
+    
+    <lastmod>2020-02-12T08:07:32.338Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.ychenchen.com/2020/01/10/streamingSystems/Streaming101/</loc>
+    
+    <lastmod>2020-02-12T03:46:26.835Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.ychenchen.com/2019/10/28/java/volatile-keyword-in-java/</loc>
     
     <lastmod>2019-10-28T03:43:26.801Z</lastmod>
