@@ -117,13 +117,14 @@
         <span class="column is-narrow">
             
             
-            14 minutes read (About 2103 words)
+            14 minutes read (About 2115 words)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h2 id="0-准备工作"><a href="#0-准备工作" class="headerlink" title="0.准备工作"></a>0.准备工作</h2><h3 id="0-1-一些资源地址"><a href="#0-1-一些资源地址" class="headerlink" title="0.1 一些资源地址"></a>0.1 一些资源地址</h3><p><a href="https://www.ansiblefordevops.com/" target="_blank" rel="noopener">Ansible for DevOps Book Site</a><br><a href="https://github.com/geerlingguy/ansible-for-devops" target="_blank" rel="noopener">Ansible for DevOps GitHub repository</a><br><a href="https://docs.ansible.com/ansible/latest/index.html" target="_blank" rel="noopener">Ansible Documentation</a><br><a href="https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html" target="_blank" rel="noopener">Ansible Glossary</a> - If there’s ever a term you don’t seem to fully understand, check the glossary.<br><a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">Ansible Example Playbooks on GitHub</a> - Many examples for common server configurations.<br><a href="ansible.com/resources/get-started">Getting Started with Ansible</a> - A simple guide to Ansible’s community and resources.<br><a href="https://www.ansible.com/blog" target="_blank" rel="noopener">Ansible Blog</a></p>
+<a id="more"></a>
 <h1 id="Chapter-1-Getting-Started-with-Ansible"><a href="#Chapter-1-Getting-Started-with-Ansible" class="headerlink" title="Chapter 1 - Getting Started with Ansible"></a>Chapter 1 - Getting Started with Ansible</h1><h2 id="1-1-Ansible-and-Infrastructure-Management"><a href="#1-1-Ansible-and-Infrastructure-Management" class="headerlink" title="1.1 Ansible and Infrastructure Management"></a>1.1 Ansible and Infrastructure Management</h2><h3 id="1-1-1-On-snowflakes-and-shell-scripts"><a href="#1-1-1-On-snowflakes-and-shell-scripts" class="headerlink" title="1.1.1 On snowflakes and shell scripts"></a>1.1.1 On snowflakes and shell scripts</h3><p>传统做法，服务器配置更新记录文档，但当要安装一台新的机器并且要求配置和当前机器一样的时候，就需要花费很长时间整理当前机器已经安装的包、文档、配置等，并且要花费很长时间重新安装、升级、配置。</p>
 <h3 id="1-1-2-Configuration-management"><a href="#1-1-2-Configuration-management" class="headerlink" title="1.1.2 Configuration management"></a>1.1.2 Configuration management</h3><p>一些配置管理工具可以帮助我们避免这类雪花服务器-servers that are uniquely configured and impossible to recreate from scratch because they were hand-configured without documentation.<br><a href="http://cfengine.com/" target="_blank" rel="noopener">CFEngine</a><br><a href="http://puppetlabs.com/" target="_blank" rel="noopener">Puppet</a><br><a href="http://www.getchef.com/chef/" target="_blank" rel="noopener">Chef</a><br>但是对于开发人员和系统管理员来说，他们已经熟悉Shell和命令行配置了，Ansible更适合他们。</p>
 <h2 id="1-2-Installing-Ansible"><a href="#1-2-Installing-Ansible" class="headerlink" title="1.2 Installing Ansible"></a>1.2 Installing Ansible</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install ansible</span><br><span class="line">ansible --version  -- ansible 2.10.4</span><br></pre></td></tr></table></figure>
@@ -161,8 +162,14 @@
 <p>它等同于这个Shell：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Start chronyd if it&apos;s not already running.</span><br><span class="line">if ps aux | grep -q &quot;[c]hronyd&quot;</span><br><span class="line">then</span><br><span class="line">    echo &quot;chronyd is running.&quot; &gt; /dev/null</span><br><span class="line">else</span><br><span class="line">    systemctl start chronyd.service &gt; /dev/null</span><br><span class="line">    echo &quot;Started chronyd.&quot;</span><br><span class="line">fi</span><br><span class="line"># Make sure chronyd is enabled on system startup.</span><br><span class="line">systemctl enable chronyd.service</span><br></pre></td></tr></table></figure></p>
 <p>为了更简洁一些，我们可以忽略name，并使用key=value的语法：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: yes</span><br><span class="line">  tasks:</span><br><span class="line">  - yum: name=chrony state=present</span><br><span class="line">  - service: name=chronyd state=started enabled=yes</span><br></pre></td></tr></table></figure></p>
 <p>但一般不建议这样做</p>
-<h2 id="2-5-Cleaning-Up"><a href="#2-5-Cleaning-Up" class="headerlink" title="2.5 Cleaning Up"></a>2.5 Cleaning Up</h2><p>使用完VM后，可以使用下面的命令将它从本地移除<code>vagrant destroy</code>,下次使用的时候可以使用<code>vagrant up</code>重新构建它。</p>
+<h2 id="2-5-Cleaning-Up"><a href="#2-5-Cleaning-Up" class="headerlink" title="2.5 Cleaning Up"></a>2.5 Cleaning Up</h2><p>使用完VM后，可以使用下面的命令将它从本地移除<code>vagrant destroy</code>,下次使用的时候可以使用<code>vagrant up</code>重新构建它, 再次执行不需要重新下载。</p>
 
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/ansible/">#ansible</a></span>
     
     </div>
     
