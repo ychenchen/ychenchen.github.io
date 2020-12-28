@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.ychenchen.com/2020/12/27/ansible/ansible_for_devops/Chapter2-Getting-Started-With-Ansible/</loc>
+    
+    <lastmod>2020-12-28T01:56:25.155Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.ychenchen.com/2020/04/25/frontend/hue-js/</loc>
     
     <lastmod>2020-04-25T11:25:55.339Z</lastmod>
