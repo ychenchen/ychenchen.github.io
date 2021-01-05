@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta name="baidu-site-verification" content="H0uSt5ATxN" />
+    <meta charset="utf-8">
+<title>Chapter4-Ansible-Playbooks - ychenchen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+<script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5b953a606ae21e0011fb0a8a&product=social-ab' async='async'></script>
+
+    
+    
+    
+    
+    
+    
+
+    
+
+
+</head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    <img src="/assets/avator/avator.jpg" alt="" height="28">
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+            <a class="navbar-item "
+               href="/categories">Categories</a>
+            
+            <a class="navbar-item "
+               href="/tags">Tags</a>
+            
+            <a class="navbar-item "
+               href="/about">About</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="검색" href="javascript:;">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            
+            <a class="navbar-item" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            Chapter4-Ansible-Playbooks
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2021-01-03T07:21:50.000Z" itemprop="datePublished">Jan 3 2021</time>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            14 minutes 소요 (약 2083 단어)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <h1 id="Chapter-4-Ansible-Playbooks"><a href="#Chapter-4-Ansible-Playbooks" class="headerlink" title="Chapter 4 - Ansible Playbooks"></a>Chapter 4 - Ansible Playbooks</h1><h2 id="4-1-Power-plays"><a href="#4-1-Power-plays" class="headerlink" title="4.1 Power plays"></a>4.1 Power plays</h2><p>首先，我们对比一下使用Shell的方式安装httpd和使用Playbook的方式安装httpd：</p>
+<a id="more"></a>
+<ul>
+<li>Shell<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Install Apache.</span><br><span class="line">yum install --quiet -y httpd httpd-devel</span><br><span class="line"># Start Apache and configure it to run at boot.</span><br><span class="line">service httpd start</span><br><span class="line">chkconfig httpd on</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>只需要将脚本内容放到shell文件<code>shell-script.sh</code>中，将脚本放到目标服务器上，添加可执行权限，直接执行即可。</p>
+<ul>
+<li>Playbook<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Apache.</span><br><span class="line">      command: yum install --quiet -y httpd httpd-devel</span><br><span class="line">    - name: Start Apache and configure it to run at boot.</span><br><span class="line">      command: service httpd start</span><br><span class="line">    - command: chkconfig httpd on</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>只需要将上述内容放到<code>playbook.yml</code>文件中，执行下面的命令即可安装：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter4  $ ansible-playbook -i inventory playbook.yml</span><br><span class="line"></span><br><span class="line">PLAY [all] **************************************************************************************************************************************************************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] **************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">ok: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">TASK [Install Apache.] **************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">[WARNING]: Consider using the yum module rather than running &apos;yum&apos;.  If you need to use command because yum is insufficient you can add &apos;warn: false&apos; to this command task or set &apos;command_warnings=False&apos; in ansible.cfg to get rid of this message.</span><br><span class="line">changed: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">TASK [Start Apache and configure it to run at boot.] ********************************************************************************************************************************************************************************************************************</span><br><span class="line">[WARNING]: Consider using the service module rather than running &apos;service&apos;.  If you need to use command because service is insufficient you can add &apos;warn: false&apos; to this command task or set &apos;command_warnings=False&apos; in ansible.cfg to get rid of this message.</span><br><span class="line">changed: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">TASK [command] **********************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">changed: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">PLAY RECAP **************************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">192.168.6.86               : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure></p>
+<p>我们本次测试使用虚拟机：<code>192.168.6.86</code><br>测试前做如下准备工作：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter4  $ ll</span><br><span class="line">total 24</span><br><span class="line">-rw-------  1 alexis  staff  1679 Jan  4 17:05 id_rsa</span><br><span class="line">-rw-r--r--  1 alexis  staff   121 Jan  4 17:10 inventory</span><br><span class="line">-rw-r--r--  1 alexis  staff   237 Jan  4 17:18 playbook.yml</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter4  $ cat inventory</span><br><span class="line">[embrace]</span><br><span class="line">192.168.6.86</span><br><span class="line"></span><br><span class="line">[embrace:vars]</span><br><span class="line">ansible_user=root</span><br><span class="line">ansible_ssh_private_key_file=/Users/alexis/Sites/chapter4/id_rsa</span><br></pre></td></tr></table></figure></p>
+<p>即将86的id_rsa文件拷贝到本地，并配置到inventory的变量<code>ansible_ssh_private_key_file</code>中。</p>
+<h2 id="4-2-Running-Playbooks-with-ansible-playbook"><a href="#4-2-Running-Playbooks-with-ansible-playbook" class="headerlink" title="4.2 Running Playbooks with ansible-playbook"></a>4.2 Running Playbooks with ansible-playbook</h2><p>上面的playbook脚本和shell的作用是一模一样的，我们可以使用ansible内置的一些module让结果更好，为了演示多文件复制，我们把安装好的httpd的conf目录下的两个文件<code>httpd.conf</code>和<code>magic</code>拷贝回来。<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter4  $ ll</span><br><span class="line">total 80</span><br><span class="line">-rw-r--r--  1 alexis  staff  11753 Jan  4 17:34 httpd.conf</span><br><span class="line">-rw-------  1 alexis  staff   1679 Jan  4 17:05 id_rsa</span><br><span class="line">-rw-r--r--  1 alexis  staff    121 Jan  4 17:10 inventory</span><br><span class="line">-rw-r--r--  1 alexis  staff  13077 Jan  4 17:34 magic</span><br><span class="line">-rw-r--r--  1 alexis  staff    852 Jan  4 17:43 playbook.yml</span><br></pre></td></tr></table></figure></p>
+<p>修改playbook.yml内容如下，添加拷贝配置文件：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: yes</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Apache.</span><br><span class="line">      yum:</span><br><span class="line">        name:</span><br><span class="line">          - httpd</span><br><span class="line">          - httpd-devel</span><br><span class="line">        state: present</span><br><span class="line"></span><br><span class="line">    - name: Copy configuration files.</span><br><span class="line">      copy:</span><br><span class="line">        src: &quot;&#123;&#123; item.src &#125;&#125;&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; item.dest &#125;&#125;&quot;</span><br><span class="line">        owner: root</span><br><span class="line">        group: root</span><br><span class="line">        mode: 0644</span><br><span class="line">      with_items:</span><br><span class="line">        - src: httpd.conf</span><br><span class="line">          dest: /etc/httpd/conf/httpd.conf</span><br><span class="line">        - src: magic</span><br><span class="line">          dest: /etc/httpd/conf/magic</span><br><span class="line"></span><br><span class="line">    - name: Make sure Apache is started now and at boot.</span><br><span class="line">      service:</span><br><span class="line">        name: httpd</span><br><span class="line">        state: started</span><br><span class="line">        enabled: yes</span><br></pre></td></tr></table></figure></p>
+<p>再次执行：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter4  $ ansible-playbook -i inventory playbook.yml</span><br><span class="line"></span><br><span class="line">PLAY [all] **************************************************************************************************************************************************************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] **************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">ok: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">TASK [Install Apache.] **************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">ok: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">TASK [Copy configuration files.] ****************************************************************************************************************************************************************************************************************************************</span><br><span class="line">ok: [192.168.6.86] =&gt; (item=&#123;&apos;src&apos;: &apos;httpd.conf&apos;, &apos;dest&apos;: &apos;/etc/httpd/conf/httpd.conf&apos;&#125;)</span><br><span class="line">ok: [192.168.6.86] =&gt; (item=&#123;&apos;src&apos;: &apos;magic&apos;, &apos;dest&apos;: &apos;/etc/httpd/conf/magic&apos;&#125;)</span><br><span class="line"></span><br><span class="line">TASK [Make sure Apache is started now and at boot.] *********************************************************************************************************************************************************************************************************************</span><br><span class="line">ok: [192.168.6.86]</span><br><span class="line"></span><br><span class="line">PLAY RECAP **************************************************************************************************************************************************************************************************************************************************************</span><br><span class="line">192.168.6.86               : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-2-1-Limiting-playbooks-to-particular-hosts-and-groups"><a href="#4-2-1-Limiting-playbooks-to-particular-hosts-and-groups" class="headerlink" title="4.2.1 Limiting playbooks to particular hosts and groups"></a>4.2.1 Limiting playbooks to particular hosts and groups</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">指定一个分组：</span><br><span class="line">ansible-playbook playbook.yml --limit webservers</span><br><span class="line">指定具体机器：</span><br><span class="line">ansible-playbook playbook.yml --limit xyz.example.com</span><br><span class="line">列出待执行机器；</span><br><span class="line">ansible-playbook playbook.yml --list-hosts</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter4  $ ansible-playbook -i inventory playbook.yml --list-hosts</span><br><span class="line">playbook: playbook.yml</span><br><span class="line">  play #1 (all): all    TAGS: []</span><br><span class="line">    pattern: [&apos;all&apos;]</span><br><span class="line">    hosts (1):</span><br><span class="line">      192.168.6.86</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-2-Setting-user-and-sudo-options-with-ansible-playbook"><a href="#4-2-2-Setting-user-and-sudo-options-with-ansible-playbook" class="headerlink" title="4.2.2 Setting user and sudo options with ansible-playbook"></a>4.2.2 Setting user and sudo options with ansible-playbook</h3><p>通过–user指定执行命令的机器：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook playbook.yml --user=johndoe</span><br></pre></td></tr></table></figure></p>
+<p>指定janedoe作为sudo用户执行命令，并要求输入密码：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook playbook.yml --become --become-user=janedoe --ask-become-pass</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-2-3-Other-options-for-ansible-playbook"><a href="#4-2-3-Other-options-for-ansible-playbook" class="headerlink" title="4.2.3 Other options for ansible-playbook"></a>4.2.3 Other options for ansible-playbook</h3><ul>
+<li>–inventory=PATH (-i PATH): Define a custom inventory file (default is the default Ansible inventory file, usually located at /etc/ansible/hosts).</li>
+<li>–verbose (-v): Verbose mode (show all output, including output from successful options). You can pass in -vvvv to give every minute detail.</li>
+<li>–extra-vars=VARS (-e VARS): Define variables to be used in the playbook, in “key=value,key=value” format.</li>
+<li>–forks=NUM (-f NUM): Number for forks (integer). Set this to a number higher than 5 to increase the number of servers on which Ansible will run tasks concurrently.</li>
+<li>–connection=TYPE (-c TYPE): The type of connection which will be used (this defaults to ssh; you might sometimes want to use local to run a playbook on your local machine, or on a remote server via cron).</li>
+<li>–check: Run the playbook in Check Mode (‘Dry Run’); all tasks defined in the playbook will be checked against all hosts, but none will actually be run.</li>
+</ul>
+<h3 id="4-2-4-ansible-inventory"><a href="#4-2-4-ansible-inventory" class="headerlink" title="4.2.4 ansible-inventory"></a>4.2.4 ansible-inventory</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible-inventory -i inventory --list</span><br><span class="line">&#123;</span><br><span class="line">    &quot;_meta&quot;: &#123;</span><br><span class="line">        &quot;hostvars&quot;: &#123;</span><br><span class="line">            &quot;192.168.60.4&quot;: &#123;</span><br><span class="line">                &quot;ansible_ssh_private_key_file&quot;: &quot;~/.vagrant.d/insecure_private_key&quot;,</span><br><span class="line">                &quot;ansible_ssh_user&quot;: &quot;vagrant&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;192.168.60.5&quot;: &#123;</span><br><span class="line">                &quot;ansible_ssh_private_key_file&quot;: &quot;~/.vagrant.d/insecure_private_key&quot;,</span><br><span class="line">                &quot;ansible_ssh_user&quot;: &quot;vagrant&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;192.168.60.6&quot;: &#123;</span><br><span class="line">                &quot;ansible_ssh_private_key_file&quot;: &quot;~/.vagrant.d/insecure_private_key&quot;,</span><br><span class="line">                &quot;ansible_ssh_user&quot;: &quot;vagrant&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;all&quot;: &#123;</span><br><span class="line">        &quot;children&quot;: [</span><br><span class="line">            &quot;multi&quot;,</span><br><span class="line">            &quot;ungrouped&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;app&quot;: &#123;</span><br><span class="line">        &quot;hosts&quot;: [</span><br><span class="line">            &quot;192.168.60.4&quot;,</span><br><span class="line">            &quot;192.168.60.5&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;db&quot;: &#123;</span><br><span class="line">        &quot;hosts&quot;: [</span><br><span class="line">            &quot;192.168.60.6&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;multi&quot;: &#123;</span><br><span class="line">        &quot;children&quot;: [</span><br><span class="line">            &quot;app&quot;,</span><br><span class="line">            &quot;db&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="4-3-Real-world-playbook-Ubuntu-server-with-Solr"><a href="#4-3-Real-world-playbook-Ubuntu-server-with-Solr" class="headerlink" title="4.3 Real-world playbook: Ubuntu server with Solr"></a>4.3 Real-world playbook: Ubuntu server with Solr</h2><p>下面，我们在Ubuntu 20.04上安装一个Apache Solr，至少需要512M内存</p>
+<h3 id="4-3-1-Include-a-variables-file-and-more-pre-tasks"><a href="#4-3-1-Include-a-variables-file-and-more-pre-tasks" class="headerlink" title="4.3.1 Include a variables file, and more pre_tasks"></a>4.3.1 Include a variables file, and more pre_tasks</h3><p>创建<code>playbook.yml</code>文件，指定变量文件：<code>vars.yml</code>:<br>playbook.yml:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br></pre></td></tr></table></figure></p>
+<p>vars.yml:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">download_dir: /tmp</span><br><span class="line">solr_dir: /opt/solr</span><br><span class="line">solr_version: 8.7.0</span><br><span class="line">solr_checksum: sha512:15a3af83997e2cbc4bfed304f7d43efd260674d98059241605ff3cde0ae02d8bd1ccd56973c6cba1cc11895655bb76fcf1991bbb94b004e517ce15f728fa163f</span><br></pre></td></tr></table></figure></p>
+<p>为了确保apt-cache为最新状态，在playbook.yml中添加如下内容：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">    - name: Update apt cache if needed.</span><br><span class="line">      apt: update_cache=true cache_valid_time=3600</span><br></pre></td></tr></table></figure></p>
+<p>接下来使用apt module来安装openjdk:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">    - name: Update apt cache if needed.</span><br><span class="line">      apt: update_cache=true cache_valid_time=3600</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Java.</span><br><span class="line">      apt: name=openjdk-14-jre-headless state=present</span><br></pre></td></tr></table></figure></p>
+<p>下面安装Apache Solr, Ubuntu LTS提前安装了一个Solr，但不是最新，我们先下载最新版本：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">    - name: Update apt cache if needed.</span><br><span class="line">      apt: update_cache=true cache_valid_time=3600</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Java.</span><br><span class="line">      apt: name=openjdk-14-jre-headless state=present</span><br><span class="line"></span><br><span class="line">    - name: Download Solr.</span><br><span class="line">      get_url:</span><br><span class="line">        url: &quot;https://www.apache.org/dyn/closer.lua/lucene/solr/&#123;&#123; solr_version &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        checksum: &quot;&#123;&#123; solr_checksum &#125;&#125;&quot;</span><br></pre></td></tr></table></figure></p>
+<p><strong>dest中要指定到具体的文件名字，否则再次执行的时候，ansible会重新下载一次。</strong><br>下面解压下载下来的文件：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">    - name: Update apt cache if needed.</span><br><span class="line">      apt: update_cache=true cache_valid_time=3600</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Java.</span><br><span class="line">      apt: name=openjdk-14-jre-headless state=present</span><br><span class="line"></span><br><span class="line">    - name: Download Solr.</span><br><span class="line">      get_url:</span><br><span class="line">        url: &quot;https://www.apache.org/dyn/closer.lua/lucene/solr/&#123;&#123; solr_version &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        checksum: &quot;&#123;&#123; solr_checksum &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">    - name: Expand Solr.</span><br><span class="line">      unarchive:</span><br><span class="line">        src: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;&quot;</span><br><span class="line">        remote_src: true</span><br><span class="line">        creates: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;/README.txt&quot;</span><br></pre></td></tr></table></figure></p>
+<p>最后一行添加creates是为了保证幂等性，unarchive的src参数可以直接指定下载url，我们分成两步是因为后面还会用到下载的压缩包。<br>下面，就是执行Solr安装脚本进行安装了：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">    - name: Update apt cache if needed.</span><br><span class="line">      apt: update_cache=true cache_valid_time=3600</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Java.</span><br><span class="line">      apt: name=openjdk-14-jre-headless state=present</span><br><span class="line"></span><br><span class="line">    - name: Download Solr.</span><br><span class="line">      get_url:</span><br><span class="line">        url: &quot;https://www.apache.org/dyn/closer.lua/lucene/solr/&#123;&#123; solr_version &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        checksum: &quot;&#123;&#123; solr_checksum &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">    - name: Expand Solr.</span><br><span class="line">      unarchive:</span><br><span class="line">        src: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;&quot;</span><br><span class="line">        remote_src: true</span><br><span class="line">        creates: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;/README.txt&quot;</span><br><span class="line"></span><br><span class="line">    - name: Run Solr installation script.</span><br><span class="line">      command: &gt;</span><br><span class="line">        &#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;/bin/install_solr_service.sh</span><br><span class="line">        &#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz</span><br><span class="line">        -i /opt</span><br><span class="line">        -d /var/solr</span><br><span class="line">        -u solr</span><br><span class="line">        -s solr</span><br><span class="line">        -p 8983</span><br><span class="line">        creates=&#123;&#123; solr_dir &#125;&#125;/bin/solr</span><br></pre></td></tr></table></figure></p>
+<p>最后，确保Solr已经启动并且添加到了开机自启动中：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">  vars_files:</span><br><span class="line">  - vars.yml</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">    - name: Update apt cache if needed.</span><br><span class="line">      apt: update_cache=true cache_valid_time=3600</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install Java.</span><br><span class="line">      apt: name=openjdk-14-jre-headless state=present</span><br><span class="line"></span><br><span class="line">    - name: Download Solr.</span><br><span class="line">      get_url:</span><br><span class="line">        url: &quot;https://www.apache.org/dyn/closer.lua/lucene/solr/&#123;&#123; solr_version &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        checksum: &quot;&#123;&#123; solr_checksum &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">    - name: Expand Solr.</span><br><span class="line">      unarchive:</span><br><span class="line">        src: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz&quot;</span><br><span class="line">        dest: &quot;&#123;&#123; download_dir &#125;&#125;&quot;</span><br><span class="line">        remote_src: true</span><br><span class="line">        creates: &quot;&#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;/README.txt&quot;</span><br><span class="line"></span><br><span class="line">    - name: Run Solr installation script.</span><br><span class="line">      command: &gt;</span><br><span class="line">        &#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;/bin/install_solr_service.sh</span><br><span class="line">        &#123;&#123; download_dir &#125;&#125;/solr-&#123;&#123; solr_version &#125;&#125;.tgz</span><br><span class="line">        -i /opt</span><br><span class="line">        -d /var/solr</span><br><span class="line">        -u solr</span><br><span class="line">        -s solr</span><br><span class="line">        -p 8983</span><br><span class="line">        creates=&#123;&#123; solr_dir &#125;&#125;/bin/solr</span><br><span class="line"></span><br><span class="line">    - name: Ensure solr is started and enabled on boot.</span><br><span class="line">      service: name=solr state=started enabled=yes</span><br></pre></td></tr></table></figure></p>
+<p> 在执行脚本之前，添加inventory文件：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[solr]</span><br><span class="line">192.168.6.86</span><br><span class="line"></span><br><span class="line">[solr:vars]</span><br><span class="line">ansible_user=ubuntu</span><br><span class="line">ansible_ssh_pass=ubuntu</span><br></pre></td></tr></table></figure></p>
+<p>执行安装脚本：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook -i inventory playbook.yml</span><br></pre></td></tr></table></figure></p>
+<p>报错如下：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/solr  $ ansible-playbook -i inventory playbook.yml</span><br><span class="line"></span><br><span class="line">PLAY [all] ***********************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] ***********************************************************************************************************</span><br><span class="line">fatal: [10.211.55.6]: FAILED! =&gt; &#123;&quot;msg&quot;: &quot;Missing sudo password&quot;&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP ***********************************************************************************************************************</span><br><span class="line">10.211.55.6                : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure></p>
+<p>参考： <a href="https://stackoverflow.com/questions/25582740/missing-sudo-password-in-ansible" target="_blank" rel="noopener">https://stackoverflow.com/questions/25582740/missing-sudo-password-in-ansible</a><br>两种解决方法：<br>第一种：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook -i inventory playbook.yml -kK </span><br><span class="line">SSH password: </span><br><span class="line">BECOME password[defaults to SSH password]: </span><br><span class="line">-k, --ask-pass: ask for connection password</span><br><span class="line">-K, --ask-become-pass: ask for privilege escalation password</span><br></pre></td></tr></table></figure>
+<p>第二种：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook -i inventory playbook.yml --extra-vars &quot;ansible_sudo_pass=alexis.yang&quot;</span><br></pre></td></tr></table></figure></p>
+<p>本次我们先试用第一种方法。<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/solr  $ ansible-playbook -i inventory playbook.yml -kK</span><br><span class="line">SSH password:</span><br><span class="line">BECOME password[defaults to SSH password]:</span><br><span class="line"></span><br><span class="line">PLAY [all] ***********************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] ***********************************************************************************************************</span><br><span class="line">ok: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">TASK [Update apt cache if needed.] ***********************************************************************************************</span><br><span class="line">changed: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">TASK [Install Java.] *************************************************************************************************************</span><br><span class="line">ok: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">TASK [Download Solr.] ************************************************************************************************************</span><br><span class="line">ok: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">TASK [Expand Solr.] **************************************************************************************************************</span><br><span class="line">changed: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">TASK [Run Solr installation script.] *********************************************************************************************</span><br><span class="line">changed: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">TASK [Ensure solr is started and enabled on boot.] *******************************************************************************</span><br><span class="line">ok: [10.211.55.6]</span><br><span class="line"></span><br><span class="line">PLAY RECAP ***********************************************************************************************************************</span><br><span class="line">10.211.55.6                : ok=7    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure></p>
+
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/ansible/">#ansible</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/2020/12/28/ansible/ansible_for_devops/Chapter3-Ad-Hoc-Commands/">Chapter3-Ad-Hoc-Commands</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+<div class="sharebox">
+    
+<div class="sharethis-inline-share-buttons"></div>
+<script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5b953a606ae21e0011fb0a8a&amp;product=social-ab' async='async'></script>
+
+</div>
+
+
+
+<div class="comments">
+    <h3 class="title is-4">댓글</h3>
+    
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://www.ychenchen.com/2021/01/03/ansible/ansible_for_devops/Chapter4-Ansible-Playbooks/';
+        this.page.identifier = '2021/01/03/ansible/ansible_for_devops/Chapter4-Ansible-Playbooks/';
+        
+        this.language = 'en';
+        
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'ychenchen' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</div>
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2021 alexis.yang&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" href="https://github.com/ychenchen">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("default");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+</script>
+
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+
+    
+
+
+<script src="/js/script.js"></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="아무거나 입력하세요" />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '글',
+                PAGES: '페이지',
+                CATEGORIES: '카테고리 목록',
+                TAGS: '태그 목록',
+                UNTITLED: '(제목없음)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+</body>
+</html>

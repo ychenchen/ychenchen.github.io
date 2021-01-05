@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Buscar" href="javascript:;">
+            <a class="navbar-item search" title="검색" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -106,6 +106,47 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
+            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/" itemprop="url">02-stream-processing-fundamentals</a>
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2019-09-20T07:02:10.000Z" itemprop="datePublished">Sep 20 2019</time>
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/flink/">flink</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            23 minutes 소요 (약 3492 단어)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <h2 id="1-数据流编程简介-Introduction-To-Dataflow-Programming"><a href="#1-数据流编程简介-Introduction-To-Dataflow-Programming" class="headerlink" title="1. 数据流编程简介-Introduction To Dataflow Programming"></a>1. 数据流编程简介-Introduction To Dataflow Programming</h2><ul>
+<li><p>数据流图-Dataflow Graphs<br>数据流图通常以有向图来表示，有向图的节点（nodes）被称作Operators代表计算，边代表数据依赖。Operators是数据流应用的基本功能单元，Operators从输入源读取数据，进行计算后将结果写入到下一个Opreator。没有输入的Operator叫做输入源（data sources）,没有输出的Operator叫做目标源(data sinks)。</p></li></ul>
+        <p class="article-more-link">
+            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/#more">더 읽기</a>
+        </p>
+    
+    </div>
+    
+    
+</article>
+
+
+
+
+    
+        <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
             <a href="/2019/09/20/flink/01-intro-to-stateful-stream-processing/" itemprop="url">01-intro-to-stateful-stream-processing</a>
         
     </h1>
@@ -123,7 +164,7 @@
         <span class="column is-narrow">
             
             
-            9 minutes de lectura (Alrededor de 1416 palabras)
+            9 minutes 소요 (약 1416 단어)
         </span>
         
     </div>
@@ -136,7 +177,7 @@
 </li>
 </ul>
         <p class="article-more-link">
-            <a href="/2019/09/20/flink/01-intro-to-stateful-stream-processing/#more">Leer más</a>
+            <a href="/2019/09/20/flink/01-intro-to-stateful-stream-processing/#more">더 읽기</a>
         </p>
     
     </div>
@@ -168,7 +209,7 @@
         <span class="column is-narrow">
             
             
-            8 minutes de lectura (Alrededor de 1181 palabras)
+            8 minutes 소요 (약 1181 단어)
         </span>
         
     </div>
@@ -176,7 +217,7 @@
     
         <h2 id="什么是ClassLoader"><a href="#什么是ClassLoader" class="headerlink" title="什么是ClassLoader"></a>什么是ClassLoader</h2><p>Java ClassLoader是一个非常重要但是在平时开发过程中很少直接用到的类，从JDK源码中可以看出ClassLoader是一个抽象类；我们都知道Java程序是跑在JVM上的，当我们编译一个Java类的时候，JVM会将我们写的Java程序转换成以.class作为后缀的字节码程序，这类程序是和平台与机器无关的。当我们尝试使用这个类的时候，ClassLoader就将对应的类加载到内存中。</p>
         <p class="article-more-link">
-            <a href="/2019/06/03/java/jvm/01-classloader/#more">Leer más</a>
+            <a href="/2019/06/03/java/jvm/01-classloader/#more">더 읽기</a>
         </p>
     
     </div>
@@ -208,7 +249,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 5 palabras)
+            a few seconds 소요 (약 5 단어)
         </span>
         
     </div>
@@ -229,10 +270,10 @@
         
 <nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
     <div class="pagination-previous">
-        <a href="/">Anterior</a>
+        <a href="/">이전</a>
     </div>
     <div class="pagination-next is-invisible is-hidden-mobile">
-        <a href="/page/3/">Siguiente</a>
+        <a href="/page/3/">다음</a>
     </div>
     <ul class="pagination-list is-hidden-mobile">
         
@@ -343,7 +384,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="아무거나 입력하세요" />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -355,11 +396,11 @@
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
-                TAGS: 'Tags',
-                UNTITLED: '(Sin título)',
+                POSTS: '글',
+                PAGES: '페이지',
+                CATEGORIES: '카테고리 목록',
+                TAGS: '태그 목록',
+                UNTITLED: '(제목없음)',
             },
             CONTENT_URL: '/content.json',
         };

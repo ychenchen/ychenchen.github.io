@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Buscar" href="javascript:;">
+            <a class="navbar-item search" title="검색" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -106,6 +106,41 @@
         <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
+            <a href="/2021/01/03/ansible/ansible_for_devops/Chapter4-Ansible-Playbooks/" itemprop="url">Chapter4-Ansible-Playbooks</a>
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2021-01-03T07:21:50.000Z" itemprop="datePublished">Jan 3 2021</time>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            14 minutes 소요 (약 2083 단어)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <h1 id="Chapter-4-Ansible-Playbooks"><a href="#Chapter-4-Ansible-Playbooks" class="headerlink" title="Chapter 4 - Ansible Playbooks"></a>Chapter 4 - Ansible Playbooks</h1><h2 id="4-1-Power-plays"><a href="#4-1-Power-plays" class="headerlink" title="4.1 Power plays"></a>4.1 Power plays</h2><p>首先，我们对比一下使用Shell的方式安装httpd和使用Playbook的方式安装httpd：</p>
+        <p class="article-more-link">
+            <a href="/2021/01/03/ansible/ansible_for_devops/Chapter4-Ansible-Playbooks/#more">더 읽기</a>
+        </p>
+    
+    </div>
+    
+    
+</article>
+
+
+
+
+    
+        <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
             <a href="/2020/12/28/ansible/ansible_for_devops/Chapter3-Ad-Hoc-Commands/" itemprop="url">Chapter3-Ad-Hoc-Commands</a>
         
     </h1>
@@ -118,65 +153,16 @@
         <span class="column is-narrow">
             
             
-            20 minutes de lectura (Alrededor de 2963 palabras)
+            20 minutes 소요 (약 2987 단어)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h1 id="Chapter-3-Ad-Hoc-Commands"><a href="#Chapter-3-Ad-Hoc-Commands" class="headerlink" title="Chapter 3 - Ad-Hoc Commands"></a>Chapter 3 - Ad-Hoc Commands</h1><h2 id="3-1-Build-infrastructure-with-Vagrant-for-testing"><a href="#3-1-Build-infrastructure-with-Vagrant-for-testing" class="headerlink" title="3.1 Build infrastructure with Vagrant for testing"></a>3.1 Build infrastructure with Vagrant for testing</h2><p>从本章开始，我们将使用Vagrant强大的多机器管理能力，配置三台虚拟机并通过Ansible来管理它们。</p>
-<p>首先，在本地创建一个目录，例如<code>~/VMs/[dir]</code>, 并在该目录下执行：<code>vagrant init geerlingguy/centos7</code>, 此时会创建一个名为<code>Vagrantfile</code>的文件，打开文件，输入如下内容：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"># -*- mode: ruby -*-</span><br><span class="line"># vi: set ft=ruby :</span><br><span class="line"></span><br><span class="line">VAGRANTFILE_API_VERSION = &quot;2&quot;</span><br><span class="line"></span><br><span class="line">Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|</span><br><span class="line">  # General Vagrant VM configuration.</span><br><span class="line">  config.vm.box = &quot;geerlingguy/centos7&quot;</span><br><span class="line">  config.ssh.insert_key = false</span><br><span class="line">  config.vm.synced_folder &quot;.&quot;, &quot;/vagrant&quot;, disabled: true</span><br><span class="line">  config.vm.provider :virtualbox do |v|</span><br><span class="line">    v.memory = 512</span><br><span class="line">    v.linked_clone = true</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  # Application server 1.</span><br><span class="line">  config.vm.define &quot;app1&quot; do |app|</span><br><span class="line">    app.vm.hostname = &quot;orc-app1.test&quot;</span><br><span class="line">    app.vm.network :private_network, ip: &quot;192.168.60.4&quot;</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  # Application server 2.</span><br><span class="line">  config.vm.define &quot;app2&quot; do |app|</span><br><span class="line">    app.vm.hostname = &quot;orc-app2.test&quot;</span><br><span class="line">    app.vm.network :private_network, ip: &quot;192.168.60.5&quot;</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  # Database server.</span><br><span class="line">  config.vm.define &quot;db&quot; do |db|</span><br><span class="line">    db.vm.hostname = &quot;orc-db.test&quot;</span><br><span class="line">    db.vm.network :private_network, ip: &quot;192.168.60.6&quot;</span><br><span class="line">  end</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
-<p>接下来，在<code>Vagrantfile</code>所在的目录执行<code>vagrant up</code>命令构建我们设置好的虚拟机，构建好之后就可以在VirtualBox中看到我们添加的三台机器啦</p>
-<h2 id="3-2-Inventory-file-for-multiple-servers"><a href="#3-2-Inventory-file-for-multiple-servers" class="headerlink" title="3.2 Inventory file for multiple servers"></a>3.2 Inventory file for multiple servers</h2><p>在同目录下创建inventory文件，按照ini文件格式书写：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># Application Servers</span><br><span class="line">[app]</span><br><span class="line">192.168.60.4</span><br><span class="line">192.168.60.5</span><br><span class="line"></span><br><span class="line"># Database Server</span><br><span class="line">[db]</span><br><span class="line">192.168.60.6</span><br><span class="line"></span><br><span class="line"># Group has all the servers</span><br><span class="line">[multi:children]</span><br><span class="line">app</span><br><span class="line">db</span><br><span class="line"></span><br><span class="line"># Variables for all the servers</span><br><span class="line">[multi:vars]</span><br><span class="line">ansible_ssh_user=vagrant</span><br><span class="line">ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key</span><br></pre></td></tr></table></figure></p>
-<p>在执行命令之前先<code>ssh vagrant@192.168.60.4</code>上，此时，会在known_hosts中添加上我们的三台机器：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/.ssh  $ pwd</span><br><span class="line">/Users/alexis/.ssh</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/.ssh  $ ll</span><br><span class="line">total 80</span><br><span class="line">-rw-------  1 alexis  staff    398 May 21  2019 authorized_keys</span><br><span class="line">-rw-------  1 alexis  staff   1823 May 21  2019 id_rsa</span><br><span class="line">-rw-r--r--  1 alexis  staff    398 May 21  2019 id_rsa.pub</span><br><span class="line">-rw-r--r--  1 alexis  staff    522 Dec 29 16:55 known_hosts</span><br><span class="line">-rw-r--r--  1 alexis  staff  23327 Dec 29 13:51 known_hosts_1</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/.ssh  $ cat known_hosts</span><br><span class="line">192.168.60.6 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOym3BePaprhHJ/OOvROyHvZdwJC45A9JtPE0KqZxs5hovGWJOPmFxwAgsN6KJWAxX4qsytmt7R2N99fGotFaXc=</span><br><span class="line">192.168.60.4 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOym3BePaprhHJ/OOvROyHvZdwJC45A9JtPE0KqZxs5hovGWJOPmFxwAgsN6KJWAxX4qsytmt7R2N99fGotFaXc=</span><br><span class="line">192.168.60.5 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOym3BePaprhHJ/OOvROyHvZdwJC45A9JtPE0KqZxs5hovGWJOPmFxwAgsN6KJWAxX4qsytmt7R2N99fGotFaXc=</span><br></pre></td></tr></table></figure></p>
-<p>此时，再切换到最上面的配置文件就可以正常使用了。</p>
-<h2 id="3-3-Your-first-ad-hoc-commands"><a href="#3-3-Your-first-ad-hoc-commands" class="headerlink" title="3.3 Your first ad-hoc commands"></a>3.3 Your first ad-hoc commands</h2><p>有了inventory文件，就可以尝试执行一些Ad-Hoc命令了：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;hostname&quot;</span><br><span class="line">192.168.60.5 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app2.test</span><br><span class="line">192.168.60.6 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-db.test</span><br><span class="line">192.168.60.4 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app1.test</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-3-1-Discover-Ansible’s-parallel-nature"><a href="#3-3-1-Discover-Ansible’s-parallel-nature" class="headerlink" title="3.3.1 Discover Ansible’s parallel nature"></a>3.3.1 Discover Ansible’s parallel nature</h3><p>我们多次执行同样的命令，会发现结果返回的顺序是随机的：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;hostname&quot;</span><br><span class="line">192.168.60.5 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app2.test</span><br><span class="line">192.168.60.6 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-db.test</span><br><span class="line">192.168.60.4 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app1.test</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;hostname&quot;</span><br><span class="line">192.168.60.6 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-db.test</span><br><span class="line">192.168.60.4 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app1.test</span><br><span class="line">192.168.60.5 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app2.test</span><br></pre></td></tr></table></figure></p>
-<p>这是因为Ansible并行地(in parallel)向所有机器发送命令，如果想一次向一台机器发送命令，等结果返回后再向第二台机器发送命令，可以使用下面的命令：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;hostname&quot; -f 1</span><br><span class="line">192.168.60.4 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app1.test</span><br><span class="line">192.168.60.5 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-app2.test</span><br><span class="line">192.168.60.6 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">orc-db.test</span><br></pre></td></tr></table></figure></p>
-<p>此时我们可以看到结果是完全按照我们在inventory中定义的顺序返回的。</p>
-<h3 id="3-3-2-Learning-about-your-environment"><a href="#3-3-2-Learning-about-your-environment" class="headerlink" title="3.3.2 Learning about your environment"></a>3.3.2 Learning about your environment</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;free -m&quot;</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;df -h&quot;</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -i inventory -a &quot;date&quot;</span><br></pre></td></tr></table></figure>
-<h3 id="3-3-3-Make-changes-using-Ansible-modules"><a href="#3-3-3-Make-changes-using-Ansible-modules" class="headerlink" title="3.3.3 Make changes using Ansible modules"></a>3.3.3 Make changes using Ansible modules</h3><p>我们执行下面的命令来安装ntp服务：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -i inventory -b -m yum -a &quot;name=ntp state=present&quot;</span><br></pre></td></tr></table></figure></p>
-<p>第一次运行会得到Changed结果和安装信息：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">192.168.60.6 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;changes&quot;: &#123;</span><br><span class="line">        &quot;installed&quot;: [</span><br><span class="line">            &quot;ntp&quot;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;msg&quot;: &quot;&quot;,</span><br><span class="line">    &quot;rc&quot;: 0,</span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &quot;Loaded plugins: fastestmirror\nLoading mirror speeds from cached hostfile\n * base: mirror.bit.edu.cn\n * epel: hkg.mirror.rackspace.com\n * extras: mirror.bit.edu.cn\n * updates: mirrors.tuna.tsinghua.edu.cn\nResolving Dependencies\n--&gt; Running transaction check\n---&gt; Package ntp.x86_64 0:4.2.6p5-29.el7.centos.2 will be installed\n--&gt; Processing Dependency: ntpdate = 4.2.6p5-29.el7.centos.2 for package: ntp-4.2.6p5-29.el7.centos.2.x86_64\n--&gt; Processing Dependency: libopts.so.25()(64bit) for package: ntp-4.2.6p5-29.el7.centos.2.x86_64\n--&gt; Running transaction check\n---&gt; Package autogen-libopts.x86_64 0:5.18-5.el7 will be installed\n---&gt; Package ntpdate.x86_64 0:4.2.6p5-29.el7.centos.2 will be installed\n--&gt; Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package              Arch        Version                       Repository\n                                                                           Size\n================================================================================\nInstalling:\n ntp                  x86_64      4.2.6p5-29.el7.centos.2       base      549 k\nInstalling for dependencies:\n autogen-libopts      x86_64      5.18-5.el7                    base       66 k\n ntpdate              x86_64      4.2.6p5-29.el7.centos.2       base       87 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package (+2 Dependent packages)\n\nTotal download size: 701 k\nInstalled size: 1.6 M\nDownloading packages:\n--------------------------------------------------------------------------------\nTotal                                              766 kB/s | 701 kB  00:00     \nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : autogen-libopts-5.18-5.el7.x86_64                            1/3 \n  Installing : ntpdate-4.2.6p5-29.el7.centos.2.x86_64                       2/3 \n  Installing : ntp-4.2.6p5-29.el7.centos.2.x86_64                           3/3 \n  Verifying  : ntpdate-4.2.6p5-29.el7.centos.2.x86_64                       1/3 \n  Verifying  : ntp-4.2.6p5-29.el7.centos.2.x86_64                           2/3 \n  Verifying  : autogen-libopts-5.18-5.el7.x86_64                            3/3 \n\nInstalled:\n  ntp.x86_64 0:4.2.6p5-29.el7.centos.2                                          \n\nDependency Installed:\n  autogen-libopts.x86_64 0:5.18-5.el7  ntpdate.x86_64 0:4.2.6p5-29.el7.centos.2 \n\nComplete!\n&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>我们看到，返回结果中的换行是用\n来表示的，可以自行查找文档切换成yml ansible output format.<br>再次运行结果返回Success并提示服务已经安装了<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">192.168.60.6 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;msg&quot;: &quot;&quot;,</span><br><span class="line">    &quot;rc&quot;: 0,</span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &quot;ntp-4.2.6p5-29.el7.centos.2.x86_64 providing ntp is already installed&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果切换sudo用户需要密码，可以在命令中添加<code>-K</code>或者<code>--ask-become-pass</code>来输入密码。<br>下面，演示ansible service module, google可以找到文档，或者使用：<code>ansible-doc service</code>命令查看文档说明。<br>使用如下命令来启动ntpd并开启开机自启动<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -i inventory -b -m service -a &quot;name=ntpd state=started enabled=yes&quot;</span><br></pre></td></tr></table></figure></p>
-<p>注意，这里必须加上-b参数，因为需要用到sudo，否则会报错：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">192.168.60.5 | FAILED! =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;msg&quot;: &quot;Unable to enable service ntpd: Failed to execute operation: Connection timed out\n&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>快速停止和时间同步：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -i inventory -b -a &quot;service ntpd stop&quot;</span><br><span class="line">ansible multi -i inventory -b -a &quot;ntpdate -q 0.rhel.pool.ntp.org&quot;</span><br></pre></td></tr></table></figure></p>
-<p>不过，最好使用<code>-m service</code>.</p>
-<h2 id="3-4-Configure-groups-of-servers-or-individual-servers"><a href="#3-4-Configure-groups-of-servers-or-individual-servers" class="headerlink" title="3.4 Configure groups of servers, or individual servers"></a>3.4 Configure groups of servers, or individual servers</h2><h3 id="3-4-1-Configure-the-Application-servers"><a href="#3-4-1-Configure-the-Application-servers" class="headerlink" title="3.4.1 Configure the Application servers"></a>3.4.1 Configure the Application servers</h3><p>我们现在app分组上安装Django和相关依赖，由于Django不在CentOS的yum仓库中，因此我们使用pip安装它：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible app -i inventory -b -m yum -a &quot;name=python3-pip state=present&quot;</span><br><span class="line">ansible app -i inventory -b -m pip -a &quot;name=django&lt;4 state=present&quot;</span><br></pre></td></tr></table></figure></p>
-<p>当我们执行第二条命令使用pip来安装django的时候报错：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">192.168.60.4 | FAILED! =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;msg&quot;: &quot;Unable to find any of pip2, pip to use.  pip needs to be installed.&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>参考： <a href="https://stackoverflow.com/questions/51997637/ansible-pip-not-found" target="_blank" rel="noopener">https://stackoverflow.com/questions/51997637/ansible-pip-not-found</a><br>使用下面的命令重新安装pip：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible app -i inventory -b -m yum -a &quot;name=python-setuptools state=present&quot;</span><br><span class="line">ansible app -i inventory -b -m easy_install -a &quot;name=pip state=present&quot;</span><br></pre></td></tr></table></figure></p>
-<p>再次执行pip模块安装即可成功：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible app -i inventory -b -m pip -a &quot;name=django&lt;4 state=present&quot;</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-4-2-Configure-the-Database-servers"><a href="#3-4-2-Configure-the-Database-servers" class="headerlink" title="3.4.2 Configure the Database servers"></a>3.4.2 Configure the Database servers</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible db -i inventory -b -m yum -a &quot;name=mariadb-server state=present&quot;</span><br><span class="line">ansible db -i inventory -b -m service -a &quot;name=mariadb state=started enabled=yes&quot;</span><br></pre></td></tr></table></figure>
-<p>接下来配置防火墙，确保只有app分组机器可以访问数据库：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible db -i inventory -b -m yum -a &quot;name=firewalld state=present&quot;</span><br><span class="line">ansible db -i inventory -b -m service -a &quot;name=firewalld state=started enabled=yes&quot;</span><br><span class="line">ansible db -i inventory -b -m firewalld -a &quot;zone=database state=present permanent=yes&quot;</span><br><span class="line">ansible db -i inventory -b -m firewalld -a &quot;source=192.168.60.0/24 zone=database state=enabled permanent=yes&quot;</span><br><span class="line">ansible db -i inventory -b -m firewalld -a &quot;port=3306/tcp zone=database state=enabled permanent=yes&quot;</span><br></pre></td></tr></table></figure></p>
-<p>下面，需要配置允许app分组机器的一个用户能够访问mysql：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible db -i inventory -b -m yum -a &quot;name=python3-PyMySQL state=present&quot;</span><br><span class="line">ansible db -i inventory -b -m mysql_user -a &quot;name=django host=% password=12345 priv=*.*:ALL state=present&quot;</span><br></pre></td></tr></table></figure></p>
-<p>执行第二条命令的时候报错：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible db -i inventory -b -m mysql_user -a &quot;name=django host=% password=12345 priv=*.*:ALL state=present&quot;</span><br><span class="line">192.168.60.6 | FAILED! =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;msg&quot;: &quot;The PyMySQL (Python 2.7 and Python 3.X) or MySQL-python (Python 2.X) module is required.&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>重新执行下面这组命令即可解决：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible db -i inventory -b -m yum -a &quot;name=python-setuptools state=present&quot;</span><br><span class="line">192.168.60.6 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;msg&quot;: &quot;&quot;,</span><br><span class="line">    &quot;rc&quot;: 0,</span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &quot;python-setuptools-0.9.8-7.el7.noarch providing python-setuptools is already installed&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible db -i inventory -b -m easy_install -a &quot;name=PyMySQL state=present&quot;</span><br><span class="line">192.168.60.6 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;binary&quot;: &quot;/bin/easy_install&quot;,</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;name&quot;: &quot;PyMySQL&quot;,</span><br><span class="line">    &quot;virtualenv&quot;: null</span><br><span class="line">&#125;</span><br><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible db -i inventory -b -m mysql_user -a &quot;name=django host=% password=12345 priv=*.*:ALL state=present&quot;</span><br><span class="line">192.168.60.6 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;msg&quot;: &quot;User added&quot;,</span><br><span class="line">    &quot;user&quot;: &quot;django&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>接下来，我们就可以使用用户名<code>django</code>和密码<code>12345</code>连接到mysql了。</p>
-<h3 id="3-4-3-Make-changes-to-just-one-server"><a href="#3-4-3-Make-changes-to-just-one-server" class="headerlink" title="3.4.3 Make changes to just one server"></a>3.4.3 Make changes to just one server</h3><p>可以使用<code>--limit ip</code>限制在指定分组的哪台机器上执行：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible -i inventory app -a &quot;free -m&quot; --limit &quot;192.168.60.4&quot;</span><br><span class="line">192.168.60.4 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:            234          71          49           1         113         152</span><br><span class="line">Swap:          1023          30         993</span><br></pre></td></tr></table></figure></p>
-<p>为了避免频繁地指定inventory，我们添加一个inventory.cfg文件，指定如下内容：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[defaults]</span><br><span class="line">INVENTORY=inventory</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-5-Manage-users-and-groups"><a href="#3-5-Manage-users-and-groups" class="headerlink" title="3.5 Manage users and groups"></a>3.5 Manage users and groups</h2><p>添加与删除分组：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible app -b -m group -a &quot;name=admin state=present&quot;</span><br><span class="line">ansible app -b -m group -a &quot;name=admin state=absent&quot;</span><br></pre></td></tr></table></figure></p>
-<p>添加与删除用户：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible app -b -m user -a &quot;name=alexis group=admin createhome=yes&quot;</span><br><span class="line">ansible app -b -m user -a &quot;name=alexis state=absent remove=yes&quot;</span><br></pre></td></tr></table></figure></p>
-<p>更多关于用户和组模块信息，参照文档：<br><a href="https://docs.ansible.com/ansible/2.4/user_module.html" target="_blank" rel="noopener">https://docs.ansible.com/ansible/2.4/user_module.html</a></p>
-<h2 id="3-6-Manage-packages"><a href="#3-6-Manage-packages" class="headerlink" title="3.6 Manage packages"></a>3.6 Manage packages</h2><p>如果你想在不同的操作系统上安装一个通用的包，如git，可以使用package模块：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible app -b -m package -a &quot;name=git state=present&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-7-Manage-files-and-directories"><a href="#3-7-Manage-files-and-directories" class="headerlink" title="3.7 Manage files and directories"></a>3.7 Manage files and directories</h2><h3 id="3-7-1-Get-information-about-a-file"><a href="#3-7-1-Get-information-about-a-file" class="headerlink" title="3.7.1 Get information about a file"></a>3.7.1 Get information about a file</h3><p>If you need to check a file’s permissions, MD5, or owner, use Ansible’s stat module:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -m stat -a &quot;path=/etc/environment&quot;</span><br></pre></td></tr></table></figure></p>
-<p>这条命令以json格式返回该文件的详细信息。</p>
-<h3 id="3-7-2-Copy-a-file-to-the-servers"><a href="#3-7-2-Copy-a-file-to-the-servers" class="headerlink" title="3.7.2 Copy a file to the servers"></a>3.7.2 Copy a file to the servers</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -m copy -a &quot;src=/etc/hosts dest=/tmp/hosts&quot;</span><br></pre></td></tr></table></figure>
-<p>如果src中指定的是目录，且以/结尾，则只拷贝内容，否则包括路径一起拷贝</p>
-<h3 id="3-7-3-Retrieve-a-file-from-the-servers"><a href="#3-7-3-Retrieve-a-file-from-the-servers" class="headerlink" title="3.7.3 Retrieve a file from the servers"></a>3.7.3 Retrieve a file from the servers</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -b -m fetch -a &quot;src=/etc/hosts dest=/tmp&quot;</span><br><span class="line">192.168.60.6 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;checksum&quot;: &quot;5811e6c90c6f6dd4bef3f4d6c84f7afa11cb893e&quot;,</span><br><span class="line">    &quot;dest&quot;: &quot;/tmp/192.168.60.6/etc/hosts&quot;,</span><br><span class="line">    &quot;md5sum&quot;: &quot;fb1af75f1d60c5abbb76ddcecf7b6b9c&quot;,</span><br><span class="line">    &quot;remote_checksum&quot;: &quot;5811e6c90c6f6dd4bef3f4d6c84f7afa11cb893e&quot;,</span><br><span class="line">    &quot;remote_md5sum&quot;: null</span><br><span class="line">&#125;</span><br><span class="line">192.168.60.5 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;checksum&quot;: &quot;6c9d57059239094d403e80d5338442fa14675c3d&quot;,</span><br><span class="line">    &quot;dest&quot;: &quot;/tmp/192.168.60.5/etc/hosts&quot;,</span><br><span class="line">    &quot;md5sum&quot;: &quot;8e71932c63507aabdcc41cae917a42b0&quot;,</span><br><span class="line">    &quot;remote_checksum&quot;: &quot;6c9d57059239094d403e80d5338442fa14675c3d&quot;,</span><br><span class="line">    &quot;remote_md5sum&quot;: null</span><br><span class="line">&#125;</span><br><span class="line">192.168.60.4 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;checksum&quot;: &quot;1d4005c8208eaaaccd9b8cfa9a86dfc8ec30beae&quot;,</span><br><span class="line">    &quot;dest&quot;: &quot;/tmp/192.168.60.4/etc/hosts&quot;,</span><br><span class="line">    &quot;md5sum&quot;: &quot;8f55eb871f066514347d28d5d80f4b64&quot;,</span><br><span class="line">    &quot;remote_checksum&quot;: &quot;1d4005c8208eaaaccd9b8cfa9a86dfc8ec30beae&quot;,</span><br><span class="line">    &quot;remote_md5sum&quot;: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>文件拷贝到本地的时候会加上所属机器的IP，如：<code>/tmp/192.168.60.6/etc/hosts</code></p>
-<h3 id="3-7-4-Create-directories-and-files"><a href="#3-7-4-Create-directories-and-files" class="headerlink" title="3.7.4 Create directories and files"></a>3.7.4 Create directories and files</h3><p>创建目录：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -m file -a &quot;dest=/tmp/test mode=644 state=directory&quot;</span><br></pre></td></tr></table></figure></p>
-<p>创建链接：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible multi -m file -a &quot;src=/src/file dest=/dest/symlink state=link&quot;</span><br></pre></td></tr></table></figure></p>
-<p>删除文件和链接：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -m file -a &quot;dest=/tmp/test state=absent&quot;</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-7-4-Run-operations-in-the-background"><a href="#3-7-4-Run-operations-in-the-background" class="headerlink" title="3.7.4 Run operations in the background"></a>3.7.4 Run operations in the background</h3><p>可以通过指定如下两个参数让ansible任务后台异步执行：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-B &lt;seconds&gt;: the maximum amount of time (in seconds) to let the job run.</span><br><span class="line">-P &lt;seconds&gt;: the amount of time (in seconds) to wait between polling the servers for an updated job status.</span><br></pre></td></tr></table></figure>
-<h3 id="3-7-5-Update-servers-asynchronously-with-asynchronous-jobs"><a href="#3-7-5-Update-servers-asynchronously-with-asynchronous-jobs" class="headerlink" title="3.7.5 Update servers asynchronously with asynchronous jobs"></a>3.7.5 Update servers asynchronously with asynchronous jobs</h3><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">(base) alexis@ychenchen:/Users/alexis/Sites/chapter3  $ ansible multi -b -B 3600 -P 0 -a &quot;yum -y update&quot;</span><br><span class="line">192.168.60.6 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;ansible_job_id&quot;: &quot;565237211021.8311&quot;,</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;finished&quot;: 0,</span><br><span class="line">    &quot;results_file&quot;: &quot;/root/.ansible_async/565237211021.8311&quot;,</span><br><span class="line">    &quot;started&quot;: 1</span><br><span class="line">&#125;</span><br><span class="line">192.168.60.4 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;ansible_job_id&quot;: &quot;914459545.7981&quot;,</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;finished&quot;: 0,</span><br><span class="line">    &quot;results_file&quot;: &quot;/root/.ansible_async/914459545.7981&quot;,</span><br><span class="line">    &quot;started&quot;: 1</span><br><span class="line">&#125;</span><br><span class="line">192.168.60.5 | CHANGED =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;ansible_job_id&quot;: &quot;438212780040.7811&quot;,</span><br><span class="line">    &quot;changed&quot;: true,</span><br><span class="line">    &quot;finished&quot;: 0,</span><br><span class="line">    &quot;results_file&quot;: &quot;/root/.ansible_async/438212780040.7811&quot;,</span><br><span class="line">    &quot;started&quot;: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们通过指定<code>-P 0</code>让ansible把命令同时发送到所有机器，并返回一个<code>ansible_job_id</code><br>接下来，我们就可以通过这个job_id来获取它的状态：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -b -m async_status -a &quot;jid=565237211021.8311&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-8-Check-log-files"><a href="#3-8-Check-log-files" class="headerlink" title="3.8 Check log files"></a>3.8 Check log files</h2><p>查看文件的最后几行：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -b -a &quot;tail /var/log/messages&quot;</span><br><span class="line">ansible multi -b -m shell -a &quot;tail /var/log/messages | grep ansible-command | wc -l&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-9-Manage-cron-jobs"><a href="#3-9-Manage-cron-jobs" class="headerlink" title="3.9 Manage cron jobs"></a>3.9 Manage cron jobs</h2><p>每天4点执行脚本：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -b -m cron -a &quot;name=&apos;daily-cron-all-servers&apos; hour=4 job=&apos;/path/to/daily-script.sh&apos;&quot;</span><br></pre></td></tr></table></figure></p>
-<p>ansible会为所有没有指定具体值的时间指定*,(valid values are day, hour, minute, month, and weekday).<br>删除定时任务：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -b -m cron -a &quot;name=&apos;daily-cron-all-servers&apos; state=absent&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="3-10-Deploy-a-version-controlled-application"><a href="#3-10-Deploy-a-version-controlled-application" class="headerlink" title="3.10 Deploy a version-controlled application"></a>3.10 Deploy a version-controlled application</h2><p>First, update the git checkout to the application’s new version branch, 1.2.4, on all the app servers:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible app -b -m git -a &quot;repo=git://example.com/path/to/repo.git dest=/opt/myapp update=yes version=1.2.4&quot;</span><br></pre></td></tr></table></figure></p>
-<p>虽然可以实现，但这个需求我们一般不会直接在ad-hoc命令中完成。</p>
-
+        <p class="article-more-link">
+            <a href="/2020/12/28/ansible/ansible_for_devops/Chapter3-Ad-Hoc-Commands/#more">더 읽기</a>
+        </p>
     
     </div>
     
@@ -202,7 +188,7 @@
         <span class="column is-narrow">
             
             
-            14 minutes de lectura (Alrededor de 2115 palabras)
+            14 minutes 소요 (약 2115 단어)
         </span>
         
     </div>
@@ -210,7 +196,7 @@
     
         <h2 id="0-准备工作"><a href="#0-准备工作" class="headerlink" title="0.准备工作"></a>0.准备工作</h2><h3 id="0-1-一些资源地址"><a href="#0-1-一些资源地址" class="headerlink" title="0.1 一些资源地址"></a>0.1 一些资源地址</h3><p><a href="https://www.ansiblefordevops.com/" target="_blank" rel="noopener">Ansible for DevOps Book Site</a><br><a href="https://github.com/geerlingguy/ansible-for-devops" target="_blank" rel="noopener">Ansible for DevOps GitHub repository</a><br><a href="https://docs.ansible.com/ansible/latest/index.html" target="_blank" rel="noopener">Ansible Documentation</a><br><a href="https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html" target="_blank" rel="noopener">Ansible Glossary</a> - If there’s ever a term you don’t seem to fully understand, check the glossary.<br><a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">Ansible Example Playbooks on GitHub</a> - Many examples for common server configurations.<br><a href="ansible.com/resources/get-started">Getting Started with Ansible</a> - A simple guide to Ansible’s community and resources.<br><a href="https://www.ansible.com/blog" target="_blank" rel="noopener">Ansible Blog</a></p>
         <p class="article-more-link">
-            <a href="/2020/12/27/ansible/ansible_for_devops/Chapter2-Getting-Started-With-Ansible/#more">Leer más</a>
+            <a href="/2020/12/27/ansible/ansible_for_devops/Chapter2-Getting-Started-With-Ansible/#more">더 읽기</a>
         </p>
     
     </div>
@@ -237,7 +223,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 0 palabras)
+            a few seconds 소요 (약 0 단어)
         </span>
         
     </div>
@@ -269,7 +255,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 0 palabras)
+            a few seconds 소요 (약 0 단어)
         </span>
         
     </div>
@@ -301,7 +287,7 @@
         <span class="column is-narrow">
             
             
-            20 minutes de lectura (Alrededor de 3002 palabras)
+            20 minutes 소요 (약 3002 단어)
         </span>
         
     </div>
@@ -314,7 +300,7 @@
 </li>
 </ul>
         <p class="article-more-link">
-            <a href="/2020/02/12/flink/00-flink-training/#more">Leer más</a>
+            <a href="/2020/02/12/flink/00-flink-training/#more">더 읽기</a>
         </p>
     
     </div>
@@ -341,7 +327,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 0 palabras)
+            a few seconds 소요 (약 0 단어)
         </span>
         
     </div>
@@ -373,7 +359,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 0 palabras)
+            a few seconds 소요 (약 0 단어)
         </span>
         
     </div>
@@ -410,7 +396,7 @@
         <span class="column is-narrow">
             
             
-            a few seconds de lectura (Alrededor de 0 palabras)
+            a few seconds 소요 (약 0 단어)
         </span>
         
     </div>
@@ -447,7 +433,7 @@
         <span class="column is-narrow">
             
             
-            34 minutes de lectura (Alrededor de 5157 palabras)
+            34 minutes 소요 (약 5157 단어)
         </span>
         
     </div>
@@ -455,48 +441,7 @@
     
         <h2 id="1-系统架构-System-Architecture"><a href="#1-系统架构-System-Architecture" class="headerlink" title="1.系统架构-System Architecture"></a>1.系统架构-System Architecture</h2><p>Flink是一个用来做有状态并行数据流处理的分布式系统。一个安装好的Flink包含了分布在多台机器上的多个进程。对于一个分布式系统，需要注意以下要点：集群计算资源分配和管理、进程协调、数据存储的持久化和高可用、错误恢复。<br>Flink并不是自己实现所有这些功能，它关注它的核心功能–分布式数据流处理。Flink和Mesos、Yarn、Kubernates这类集群资源管理应用都集成的很好，Flink也可以以Standalone集群的模式运行。Flink并不提供分布式的持久化存储，而是借助于HDFS和S3这类对象存储。对于高可用模式下的leader选举，Flink借助于Apache Zookeeper来实现。</p>
         <p class="article-more-link">
-            <a href="/2019/09/23/flink/03-the-architecture-of-apache-flink/#more">Leer más</a>
-        </p>
-    
-    </div>
-    
-    
-</article>
-
-
-
-
-    
-        <article class="article content gallery" itemscope itemprop="blogPost">
-    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
-        
-            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/" itemprop="url">02-stream-processing-fundamentals</a>
-        
-    </h1>
-    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
-        <span class="column is-narrow">
-            <time datetime="2019-09-20T07:02:10.000Z" itemprop="datePublished">Sep 20 2019</time>
-        </span>
-        
-        <span class="column is-narrow article-category">
-            <i class="far fa-folder"></i>
-            <a class="article-category-link" href="/categories/flink/">flink</a>
-        </span>
-        
-        
-        <span class="column is-narrow">
-            
-            
-            23 minutes de lectura (Alrededor de 3492 palabras)
-        </span>
-        
-    </div>
-    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
-    
-        <h2 id="1-数据流编程简介-Introduction-To-Dataflow-Programming"><a href="#1-数据流编程简介-Introduction-To-Dataflow-Programming" class="headerlink" title="1. 数据流编程简介-Introduction To Dataflow Programming"></a>1. 数据流编程简介-Introduction To Dataflow Programming</h2><ul>
-<li><p>数据流图-Dataflow Graphs<br>数据流图通常以有向图来表示，有向图的节点（nodes）被称作Operators代表计算，边代表数据依赖。Operators是数据流应用的基本功能单元，Operators从输入源读取数据，进行计算后将结果写入到下一个Opreator。没有输入的Operator叫做输入源（data sources）,没有输出的Operator叫做目标源(data sinks)。</p></li></ul>
-        <p class="article-more-link">
-            <a href="/2019/09/20/flink/02-stream-processing-fundamentals/#more">Leer más</a>
+            <a href="/2019/09/23/flink/03-the-architecture-of-apache-flink/#more">더 읽기</a>
         </p>
     
     </div>
@@ -512,10 +457,10 @@
         
 <nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
     <div class="pagination-previous is-invisible is-hidden-mobile">
-        <a href="/page/0/">Anterior</a>
+        <a href="/page/0/">이전</a>
     </div>
     <div class="pagination-next">
-        <a href="/page/2/">Siguiente</a>
+        <a href="/page/2/">다음</a>
     </div>
     <ul class="pagination-list is-hidden-mobile">
         
@@ -626,7 +571,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="아무거나 입력하세요" />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -638,11 +583,11 @@
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
-                TAGS: 'Tags',
-                UNTITLED: '(Sin título)',
+                POSTS: '글',
+                PAGES: '페이지',
+                CATEGORIES: '카테고리 목록',
+                TAGS: '태그 목록',
+                UNTITLED: '(제목없음)',
             },
             CONTENT_URL: '/content.json',
         };

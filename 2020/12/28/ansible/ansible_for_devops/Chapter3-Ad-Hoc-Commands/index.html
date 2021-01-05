@@ -83,7 +83,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Buscar" href="javascript:;">
+            <a class="navbar-item search" title="검색" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -117,13 +117,14 @@
         <span class="column is-narrow">
             
             
-            20 minutes de lectura (Alrededor de 2963 palabras)
+            20 minutes 소요 (약 2987 단어)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
         <h1 id="Chapter-3-Ad-Hoc-Commands"><a href="#Chapter-3-Ad-Hoc-Commands" class="headerlink" title="Chapter 3 - Ad-Hoc Commands"></a>Chapter 3 - Ad-Hoc Commands</h1><h2 id="3-1-Build-infrastructure-with-Vagrant-for-testing"><a href="#3-1-Build-infrastructure-with-Vagrant-for-testing" class="headerlink" title="3.1 Build infrastructure with Vagrant for testing"></a>3.1 Build infrastructure with Vagrant for testing</h2><p>从本章开始，我们将使用Vagrant强大的多机器管理能力，配置三台虚拟机并通过Ansible来管理它们。</p>
+<a id="more"></a>
 <p>首先，在本地创建一个目录，例如<code>~/VMs/[dir]</code>, 并在该目录下执行：<code>vagrant init geerlingguy/centos7</code>, 此时会创建一个名为<code>Vagrantfile</code>的文件，打开文件，输入如下内容：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"># -*- mode: ruby -*-</span><br><span class="line"># vi: set ft=ruby :</span><br><span class="line"></span><br><span class="line">VAGRANTFILE_API_VERSION = &quot;2&quot;</span><br><span class="line"></span><br><span class="line">Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|</span><br><span class="line">  # General Vagrant VM configuration.</span><br><span class="line">  config.vm.box = &quot;geerlingguy/centos7&quot;</span><br><span class="line">  config.ssh.insert_key = false</span><br><span class="line">  config.vm.synced_folder &quot;.&quot;, &quot;/vagrant&quot;, disabled: true</span><br><span class="line">  config.vm.provider :virtualbox do |v|</span><br><span class="line">    v.memory = 512</span><br><span class="line">    v.linked_clone = true</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  # Application server 1.</span><br><span class="line">  config.vm.define &quot;app1&quot; do |app|</span><br><span class="line">    app.vm.hostname = &quot;orc-app1.test&quot;</span><br><span class="line">    app.vm.network :private_network, ip: &quot;192.168.60.4&quot;</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  # Application server 2.</span><br><span class="line">  config.vm.define &quot;app2&quot; do |app|</span><br><span class="line">    app.vm.hostname = &quot;orc-app2.test&quot;</span><br><span class="line">    app.vm.network :private_network, ip: &quot;192.168.60.5&quot;</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  # Database server.</span><br><span class="line">  config.vm.define &quot;db&quot; do |db|</span><br><span class="line">    db.vm.hostname = &quot;orc-db.test&quot;</span><br><span class="line">    db.vm.network :private_network, ip: &quot;192.168.60.6&quot;</span><br><span class="line">  end</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
 <p>接下来，在<code>Vagrantfile</code>所在的目录执行<code>vagrant up</code>命令构建我们设置好的虚拟机，构建好之后就可以在VirtualBox中看到我们添加的三台机器啦</p>
 <h2 id="3-2-Inventory-file-for-multiple-servers"><a href="#3-2-Inventory-file-for-multiple-servers" class="headerlink" title="3.2 Inventory file for multiple servers"></a>3.2 Inventory file for multiple servers</h2><p>在同目录下创建inventory文件，按照ini文件格式书写：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># Application Servers</span><br><span class="line">[app]</span><br><span class="line">192.168.60.4</span><br><span class="line">192.168.60.5</span><br><span class="line"></span><br><span class="line"># Database Server</span><br><span class="line">[db]</span><br><span class="line">192.168.60.6</span><br><span class="line"></span><br><span class="line"># Group has all the servers</span><br><span class="line">[multi:children]</span><br><span class="line">app</span><br><span class="line">db</span><br><span class="line"></span><br><span class="line"># Variables for all the servers</span><br><span class="line">[multi:vars]</span><br><span class="line">ansible_ssh_user=vagrant</span><br><span class="line">ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key</span><br></pre></td></tr></table></figure></p>
@@ -175,6 +176,8 @@
 <p>ansible会为所有没有指定具体值的时间指定*,(valid values are day, hour, minute, month, and weekday).<br>删除定时任务：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible multi -b -m cron -a &quot;name=&apos;daily-cron-all-servers&apos; state=absent&quot;</span><br></pre></td></tr></table></figure></p>
 <h2 id="3-10-Deploy-a-version-controlled-application"><a href="#3-10-Deploy-a-version-controlled-application" class="headerlink" title="3.10 Deploy a version-controlled application"></a>3.10 Deploy a version-controlled application</h2><p>First, update the git checkout to the application’s new version branch, 1.2.4, on all the app servers:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible app -b -m git -a &quot;repo=git://example.com/path/to/repo.git dest=/opt/myapp update=yes version=1.2.4&quot;</span><br></pre></td></tr></table></figure></p>
 <p>虽然可以实现，但这个需求我们一般不会直接在ad-hoc命令中完成。</p>
+<h2 id="3-11-Destroy-Vagrant-VMs"><a href="#3-11-Destroy-Vagrant-VMs" class="headerlink" title="3.11 Destroy Vagrant VMs"></a>3.11 Destroy Vagrant VMs</h2><p>测试完成后，执行:<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vagrant destroy -f</span><br></pre></td></tr></table></figure></p>
+<p>kill掉测试用的机器。</p>
 
     
     </div>
@@ -187,7 +190,9 @@
     
     
     <div class="columns is-mobile is-multiline article-nav">
-        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/2021/01/03/ansible/ansible_for_devops/Chapter4-Ansible-Playbooks/">Chapter4-Ansible-Playbooks</a>
             
         </span>
         <span class="column is-12-mobile is-half-desktop  article-nav-next">
@@ -210,7 +215,7 @@
 
 
 <div class="comments">
-    <h3 class="title is-4">Comentarios</h3>
+    <h3 class="title is-4">댓글</h3>
     
 <script>
     var disqus_config = function () {
@@ -334,7 +339,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="아무거나 입력하세요" />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -346,11 +351,11 @@
     (function (window) {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
-                POSTS: 'Posts',
-                PAGES: 'Páginas',
-                CATEGORIES: 'Categorías',
-                TAGS: 'Tags',
-                UNTITLED: '(Sin título)',
+                POSTS: '글',
+                PAGES: '페이지',
+                CATEGORIES: '카테고리 목록',
+                TAGS: '태그 목록',
+                UNTITLED: '(제목없음)',
             },
             CONTENT_URL: '/content.json',
         };
