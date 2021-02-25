@@ -122,13 +122,13 @@
         <span class="column is-narrow">
             
             
-            14 minutes read (About 2155 words)
+            14 minutes read (About 2152 words)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <h1 id="Chapter-4-Ansible-Playbooks"><a href="#Chapter-4-Ansible-Playbooks" class="headerlink" title="Chapter 4 - Ansible Playbooks"></a>Chapter 4 - Ansible Playbooks</h1><h2 id="4-1-Power-plays"><a href="#4-1-Power-plays" class="headerlink" title="4.1 Power plays"></a>4.1 Power plays</h2><p>首先，我们对比一下使用Shell的方式安装httpd和使用Playbook的方式安装httpd：</p>
+        <h2 id="4-1-Power-plays"><a href="#4-1-Power-plays" class="headerlink" title="4.1 Power plays"></a>4.1 Power plays</h2><p>首先，我们对比一下使用Shell的方式安装httpd和使用Playbook的方式安装httpd：</p>
 <a id="more"></a>
 <ul>
 <li>Shell<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Install Apache.</span><br><span class="line">yum install --quiet -y httpd httpd-devel</span><br><span class="line"># Start Apache and configure it to run at boot.</span><br><span class="line">service httpd start</span><br><span class="line">chkconfig httpd on</span><br></pre></td></tr></table></figure>
